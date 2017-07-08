@@ -7,6 +7,8 @@ import android.util.Log;
 import com.errorplayer.lala_weather.db.City;
 import com.errorplayer.lala_weather.db.County;
 import com.errorplayer.lala_weather.db.Province;
+import com.errorplayer.lala_weather.gson.WeatherInfo;
+import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -91,5 +93,23 @@ public class Utility {
             }
         }
         return false;
+    }
+
+    public static WeatherInfo handleWeatherResponse(String response)
+    {
+
+        try{
+            JSONObject jsonObject = new JSONObject(response);
+            JSONArray jsonArray = jsonObject.getJSONArray("HeWeather5");
+            String weatherContent = jsonArray.getJSONObject(0).toString();
+            if (TextUtils.isEmpty(weatherContent))
+                Log.d("DDD", "weathercontent is null ");
+            return new Gson().fromJson(weatherContent,WeatherInfo.class);
+
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
