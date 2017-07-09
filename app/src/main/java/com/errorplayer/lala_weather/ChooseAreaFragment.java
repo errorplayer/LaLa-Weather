@@ -1,11 +1,18 @@
 package com.errorplayer.lala_weather;
 
+import android.Manifest;
 import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,6 +40,7 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
+import static android.content.Context.LOCATION_SERVICE;
 
 
 /**
@@ -41,7 +49,20 @@ import okhttp3.Response;
 
 public class ChooseAreaFragment extends Fragment {
 
-    public static final String TAG = "MAIN";
+    private double latitude = 0.0;
+    private double longitude = 0.0;
+
+    private LocationListener locationListener;
+
+    private int locateFlag;
+
+    private LocationManager locationManager;
+
+    private Location location;
+
+    private Button locateButton;
+
+    public static final String TAG = "ChooseAreaFragment:";
 
     public static final int LEVEL_PROVINCE = 0;
 
@@ -78,12 +99,11 @@ public class ChooseAreaFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater,  ViewGroup container, Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.choose_area,container,false);
+        locateButton = (Button) view.findViewById(R.id.locate_button);
         titleText = (TextView) view.findViewById(R.id.title_text);
         backButton = (Button) view.findViewById(R.id.back_button);
         listView = (ListView) view.findViewById(R.id.list_view);
-        //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            adapter = new ArrayAdapter<>(listView.getContext(),android.R.layout.simple_list_item_1,dataList);
-        //}
+        adapter = new ArrayAdapter<>(listView.getContext(),android.R.layout.simple_list_item_1,dataList);
         listView.setAdapter(adapter);
         return view;
     }
@@ -91,31 +111,28 @@ public class ChooseAreaFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                if (currentLevel == LEVEL_PROVINCE)
-                {
+                if (currentLevel == LEVEL_PROVINCE) {
                     selectedProvince = provinceList.get(position);
                     Log.d(TAG, "onClick: 省份 ");
                     queryCities();
-                }else if(currentLevel == LEVEL_CITY)
-                {
+                } else if (currentLevel == LEVEL_CITY) {
                     Log.d(TAG, "onClick: 城市 ");
                     selectedCity = cityList.get(position);
                     queryCounties();
-                }else if (currentLevel == LEVEL_COUNTY)
-                {
+                } else if (currentLevel == LEVEL_COUNTY) {
                     String weatherId = countyList.get(position).getWeatherId();
-                    if (getActivity() instanceof MainActivity)
-                    {
-                        Intent intent = new Intent(getActivity(),WeatherActivity.class);
-                        intent.putExtra("weather_id",weatherId);
+                    if (getActivity() instanceof MainActivity) {
+                        Intent intent = new Intent(getActivity(), WeatherActivity.class);
+                        intent.putExtra("weather_id", weatherId);
                         startActivity(intent);
                         getActivity().finish();
-                    }else if(getActivity() instanceof WeatherActivity)
-                    {
-                        WeatherActivity activity = (WeatherActivity)getActivity();
+                    } else if (getActivity() instanceof WeatherActivity) {
+                        WeatherActivity activity = (WeatherActivity) getActivity();
                         activity.drawerLayout.closeDrawers();
                         activity.swipeRefresh.setRefreshing(true);
                         activity.requestWeather(weatherId);
@@ -124,23 +141,39 @@ public class ChooseAreaFragment extends Fragment {
                 }
             }
         });
-        backButton.setOnClickListener(new View.OnClickListener()
-        {
+
+        backButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
-                if (currentLevel == LEVEL_COUNTY)
-                {
+            public void onClick(View v) {
+                if (currentLevel == LEVEL_COUNTY) {
 
                     queryCities();
-                }else if (currentLevel == LEVEL_CITY)
-                {
-                   queryProvinces();
+                } else if (currentLevel == LEVEL_CITY) {
+                    queryProvinces();
                 }
             }
         });
         queryProvinces();
+        locateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                getLoc();
+                if (getActivity() instanceof WeatherActivity) {
+                    WeatherActivity activity = (WeatherActivity) getActivity();
+                    activity.drawerLayout.closeDrawers();
+                    activity.swipeRefresh.setRefreshing(true);
+                    activity.requestVirtualWeather();
+                }
+
+
+            }
+
+        });
+
     }
+
+
 
     private void queryCounties() {
         titleText.setText(selectedCity.getCityName());
@@ -279,6 +312,92 @@ public class ChooseAreaFragment extends Fragment {
             progressDialog.setCanceledOnTouchOutside(false);
         }
         progressDialog.show();
+    }
+
+
+
+    public void getLoc() {
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            List<String> permissionList = new ArrayList<>();
+            permissionList.add(Manifest.permission.ACCESS_FINE_LOCATION);
+            permissionList.add(Manifest.permission.ACCESS_COARSE_LOCATION);
+            String[] permissions = permissionList.toArray(new String[permissionList.size()]);
+            ActivityCompat.requestPermissions(getActivity(), permissions, 1);
+        }
+        locationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
+        String provider;
+        Criteria criteria = new Criteria();
+        criteria.setAccuracy(Criteria.ACCURACY_FINE);// 高精度
+        criteria.setAltitudeRequired(false);// 不要求海拔
+        criteria.setBearingRequired(false);// 不要求方位
+        criteria.setCostAllowed(true);// 允许有花费
+        criteria.setPowerRequirement(Criteria.ACCURACY_HIGH);// 低功耗
+        // 从可用的位置提供器中，匹配以上标准的最佳提供器
+        provider = locationManager.getBestProvider(criteria, true);
+
+        location = locationManager.getLastKnownLocation(provider);
+        if (location != null)
+        {
+            String latitude = location.getLatitude() + "";
+            String longitude = location.getLongitude() + "";
+            if (getActivity() instanceof MainActivity) {
+                Intent intent = new Intent(getActivity(), WeatherActivity.class);
+                intent.putExtra("weather_latitude", latitude);
+                intent.putExtra("weather_longitude", longitude);
+                startActivity(intent);
+                getActivity().finish();
+            } else if (getActivity() instanceof WeatherActivity) {
+                WeatherActivity activity = (WeatherActivity) getActivity();
+                activity.drawerLayout.closeDrawers();
+                activity.swipeRefresh.setRefreshing(true);
+                activity.requestWeather(latitude, longitude);
+            }
+            return ;
+        }else {
+            Toast.makeText(getActivity(),"请确认GPS已经开启。",Toast.LENGTH_SHORT).show();
+
+        }
+        locationListener = new LocationListener() {
+            public void onStatusChanged(String provider, int status,
+                                        Bundle extras) {
+                // TODO Auto-generated method stub
+            }
+            public void onProviderEnabled(String provider) {
+                // TODO Auto-generated method stub
+            }
+            public void onProviderDisabled(String provider) {
+                // TODO Auto-generated method stub
+            }
+            public void onLocationChanged(Location location) {
+                String lat = String.valueOf(location.getLatitude());
+                String lon = String.valueOf(location.getLongitude());
+//                Log.d("ChooseAreaFragment", lat);
+//                Log.d("ChooseAreaFragment", lon);
+                if (location != null)
+                {
+                    String latitude = location.getLatitude() + "";
+                    String longitude = location.getLongitude() + "";
+                    if (getActivity() instanceof MainActivity) {
+                        Intent intent = new Intent(getActivity(), WeatherActivity.class);
+                        intent.putExtra("weather_latitude", lat);
+                        intent.putExtra("weather_longitude", lon);
+                        startActivity(intent);
+                        getActivity().finish();
+                    } else if (getActivity() instanceof WeatherActivity) {
+                        WeatherActivity activity = (WeatherActivity) getActivity();
+                        activity.drawerLayout.closeDrawers();
+                        activity.swipeRefresh.setRefreshing(true);
+                        activity.requestWeather(latitude, longitude);
+                    }
+                }
+
+
+            }
+        };
+        locationManager.requestLocationUpdates(provider,500, 1, locationListener);
+
+
     }
 
 }

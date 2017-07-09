@@ -34,15 +34,11 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/qlty_text"
                     android:textColor="#fff"
+
                     android:layout_gravity="center"
                     android:textSize="50sp"/>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="等级"
-                    android:textColor="#fff"/>
+
 
             </LinearLayout>
 

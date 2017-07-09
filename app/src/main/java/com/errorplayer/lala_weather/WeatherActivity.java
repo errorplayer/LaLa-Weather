@@ -7,10 +7,12 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -31,6 +33,9 @@ import static android.R.attr.value;
 import static com.errorplayer.lala_weather.R.color.colorAccent;
 
 public class WeatherActivity extends AppCompatActivity {
+    private String lastLocationCache_la;
+
+    private String lastLocationCache_lo;
 
     public DrawerLayout drawerLayout;
 
@@ -62,10 +67,14 @@ public class WeatherActivity extends AppCompatActivity {
 
     private TextView sportText;
 
+    private ImageView weatherImage;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_weather);
+        lastLocationCache_la = "";
+        lastLocationCache_lo = "";
         swipeRefresh = (SwipeRefreshLayout)findViewById(R.id.swipe_refresh);
         swipeRefresh.setColorSchemeResources(R.color.colorAccent);
 
@@ -77,6 +86,7 @@ public class WeatherActivity extends AppCompatActivity {
         titleUpdateTime = (TextView) findViewById(R.id.title_update_time);
         degreeText = (TextView) findViewById(R.id.degree_text);
         weatherInfoText = (TextView) findViewById(R.id.weather_info_text);
+        weatherImage = (ImageView) findViewById(R.id.weather_image);
 
         qltyText = (TextView) findViewById(R.id.qlty_text);
         pm25Text = (TextView) findViewById(R.id.pm25_text);
@@ -91,10 +101,16 @@ public class WeatherActivity extends AppCompatActivity {
             WeatherInfo weather = Utility.handleWeatherResponse(weatherString);
             mWeatherId =weather.basic.weatherId;
             showWeatherInfo(weather);
-        }else {
+        }else if (!TextUtils.isEmpty(getIntent().getStringExtra("weather_id")) ){
             mWeatherId = getIntent().getStringExtra("weather_id");
             weatherLayout.setVisibility(View.INVISIBLE);
             requestWeather(mWeatherId);
+        }else if(!TextUtils.isEmpty(getIntent().getStringExtra("weather_latitude")))
+        {
+            String latitude = getIntent().getStringExtra("weather_latitude")+"";
+            String longitude = getIntent().getStringExtra("weather_longitude")+"";
+            weatherLayout.setVisibility(View.INVISIBLE);
+            requestWeather(latitude,longitude);
         }
         swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -147,10 +163,6 @@ public class WeatherActivity extends AppCompatActivity {
                             showWeatherInfo(weather);
                             mWeatherId = weatherId;
 
-                        }else
-                        {
-
-                            Toast.makeText(WeatherActivity.this,"刷新失败",Toast.LENGTH_LONG).show();
                         }
                         swipeRefresh.setRefreshing(false);
                     }
@@ -158,11 +170,64 @@ public class WeatherActivity extends AppCompatActivity {
             }
         });
     }
+    public void requestWeather(final String latitude,final String longitude) {
+        if (!TextUtils.isEmpty(latitude)&&!TextUtils.isEmpty(longitude)) {
+            lastLocationCache_la = latitude;
+            lastLocationCache_lo = longitude;
+            String weatherUrl = "https://free-api.heweather.com/v5/weather?city=" + latitude + "," + longitude + "&key=8ac5c8e5219b440694de3be0ff010fb2";
+            HttpUtil.sendOkHttpRequest(weatherUrl, new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    e.printStackTrace();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(WeatherActivity.this, "获取天气信息失败",
+                                    Toast.LENGTH_SHORT).show();
+                            swipeRefresh.setRefreshing(false);
 
+                        }
+                    });
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    final String responseText = response.body().string();
+                    final WeatherInfo weather = Utility.handleWeatherResponse(responseText);
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (weather != null && "ok".equals(weather.status)) {
+                                SharedPreferences.Editor editor = PreferenceManager
+                                        .getDefaultSharedPreferences(WeatherActivity.this).edit();
+                                editor.putString("weather", responseText);
+                                editor.apply();
+                                showWeatherInfo(weather);
+                                mWeatherId = weather.basic.weatherId;
+
+                            }
+                            swipeRefresh.setRefreshing(false);
+                        }
+                    });
+                }
+            });
+            Toast.makeText(WeatherActivity.this,"定位成功！请及时关闭GPS。",Toast.LENGTH_SHORT).show();
+        }else
+        {
+
+            Toast.makeText(WeatherActivity.this,"请稍后再试。",Toast.LENGTH_SHORT).show();
+            swipeRefresh.setRefreshing(false);
+        }
+    }
+    public void requestVirtualWeather()
+    {
+        requestWeather(lastLocationCache_la,lastLocationCache_lo);
+    }
     private void showWeatherInfo(WeatherInfo weather) {
         String cityName = weather.basic.cityName;
         String updateTime = weather.basic.update.updateTime.split(" ")[1];
-        String degree  = weather.now.temperature+"°C";
+        String degree  = weather.now.temperature;
         String weatherInfo = weather.now.more.info;
 
 
@@ -171,6 +236,20 @@ public class WeatherActivity extends AppCompatActivity {
         titleUpdateTime.setText(updateTime);
         degreeText.setText(degree);
         weatherInfoText.setText(weatherInfo);
+        if (weatherInfo.contains("云"))
+            weatherImage.setImageResource(R.drawable.cloudy);
+        if (weatherInfo.contains("雨"))
+            weatherImage.setImageResource(R.drawable.rain);
+        if (weatherInfo.contains("雷"))
+            weatherImage.setImageResource(R.drawable.thunder);
+        if (weatherInfo.contains("雪"))
+            weatherImage.setImageResource(R.drawable.snow);
+        if (weatherInfo.contains("晴"))
+            weatherImage.setImageResource(R.drawable.sun);
+        if (weatherInfo.contains("阴"))
+            weatherImage.setImageResource(R.drawable.overcast);
+
+
         forecastLayout.removeAllViews();
         for(Forecast forecast : weather.forecastsList)
         {
@@ -179,7 +258,11 @@ public class WeatherActivity extends AppCompatActivity {
             TextView infoText = (TextView)view.findViewById(R.id.info_text);
             TextView maxText = (TextView)view.findViewById(R.id.max_text);
             TextView minText = (TextView)view.findViewById(R.id.min_text);
-            dateTime.setText(forecast.date);
+
+            String month = forecast.date.split("-")[1];
+            String day = forecast.date.split("-")[2];
+
+            dateTime.setText(month+"月"+day+"日");
             infoText.setText(forecast.more.info);
             maxText.setText(forecast.temperature.max);
             minText.setText(forecast.temperature.min);
@@ -188,6 +271,8 @@ public class WeatherActivity extends AppCompatActivity {
         }
         if (weather.aqi != null)
         {
+            if (weather.aqi.city.qlty.length() > 2)
+                qltyText.setTextSize(35);
             qltyText.setText(weather.aqi.city.qlty);
             pm25Text.setText(weather.aqi.city.pm25);
         }else
