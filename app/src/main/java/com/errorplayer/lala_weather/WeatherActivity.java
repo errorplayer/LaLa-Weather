@@ -69,6 +69,14 @@ public class WeatherActivity extends AppCompatActivity {
 
     private ImageView weatherImage;
 
+    private TextView drsgText;
+
+    private TextView fluText;
+
+    private TextView uvText;
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,6 +101,9 @@ public class WeatherActivity extends AppCompatActivity {
         carWashText = (TextView) findViewById(R.id.car_wash_text);
         comfortText = (TextView) findViewById(R.id.comfort_text);
         sportText = (TextView) findViewById(R.id.sport_text);
+        drsgText = (TextView) findViewById(R.id.drsg_text);
+        fluText = (TextView) findViewById(R.id.flu_text);
+        uvText = (TextView) findViewById(R.id.uv_text);
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         String weatherString = prefs.getString("weather",null);
@@ -284,9 +295,15 @@ public class WeatherActivity extends AppCompatActivity {
         String comfort = "舒适度："+weather.suggestion.comfort.Info;
         String carWash = "洗车指数："+weather.suggestion.carWash.Info;
         String sport = "运动建议："+weather.suggestion.sport.Info;
+        String Uv = "紫外线："+weather.suggestion.uv.Info;
+        String Flu = "流感："+weather.suggestion.flu.Info;
+        String Dress = "穿衣建议："+weather.suggestion.dress.Info;
         comfortText.setText(comfort);
         carWashText.setText(carWash);
         sportText.setText(sport);
+        fluText.setText(Flu);
+        uvText.setText(Uv);
+        drsgText.setText(Dress);
         weatherLayout.setVisibility(View.VISIBLE);
 
     }

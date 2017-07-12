@@ -15,6 +15,13 @@ public class SuggestionInfo {
 
     public Sport sport;
 
+    public Flu flu;
+
+    public UV  uv;
+
+    @SerializedName("drsg")
+    public Dress dress;
+
     public class Comfort{
         @SerializedName("txt")
         public String Info;
@@ -26,6 +33,21 @@ public class SuggestionInfo {
     }
 
     public class Sport{
+        @SerializedName("txt")
+        public String Info;
+    }
+
+    public class Flu{
+        @SerializedName("txt")
+        public String Info;
+    }
+
+    public class Dress{
+        @SerializedName("txt")
+        public String Info;
+    }
+
+    public class UV{
         @SerializedName("txt")
         public String Info;
     }
