@@ -36,7 +36,8 @@
                     android:textColor="#fff"
 
                     android:layout_gravity="center"
-                    android:textSize="50sp"/>
+                    android:textSize="50sp"
+                    />
 
 
 

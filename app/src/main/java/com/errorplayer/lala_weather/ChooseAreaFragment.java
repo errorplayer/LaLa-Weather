@@ -13,6 +13,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -127,15 +128,31 @@ public class ChooseAreaFragment extends Fragment {
                 } else if (currentLevel == LEVEL_COUNTY) {
                     String weatherId = countyList.get(position).getWeatherId();
                     if (getActivity() instanceof MainActivity) {
-                        Intent intent = new Intent(getActivity(), WeatherActivity.class);
-                        intent.putExtra("weather_id", weatherId);
-                        startActivity(intent);
-                        getActivity().finish();
-                    } else if (getActivity() instanceof WeatherActivity) {
-                        WeatherActivity activity = (WeatherActivity) getActivity();
-                        activity.drawerLayout.closeDrawers();
-                        activity.swipeRefresh.setRefreshing(true);
-                        activity.requestWeather(weatherId);
+//                        Intent intent = new Intent(getActivity(), WeatherFragment.class);
+//                        intent.putExtra("weather_id", weatherId);
+//                        startActivity(intent);
+//                        getActivity().finish();
+                        Log.d(TAG, "准备进入天气碎片 ");
+//                        Fragment weatherFragment = Fragment.instantiate(getActivity(), WeatherFragment.class.getName());
+//                        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+//                        Bundle args = new Bundle();
+//                        args.putString("weather_id",weatherId);
+//
+//                        weatherFragment.setArguments(args);
+//                        fragmentTransaction.replace(R.id.choose_area_fragment, weatherFragment);
+//                        fragmentTransaction.commit();
+
+                        getFragmentManager()
+                                .beginTransaction()
+                                .replace(R.id.choose_area_fragment,
+                                        WeatherFragment.newInstance("weather_id", weatherId))
+                                .commit();
+                        Log.d(TAG, "进入天气碎片准备结束 ");
+                    } else if (getParentFragment() instanceof WeatherFragment) {
+                        WeatherFragment weatherFragment = (WeatherFragment) getParentFragment();
+                        weatherFragment.drawerLayout.closeDrawers();
+                        weatherFragment.swipeRefresh.setRefreshing(true);
+                        weatherFragment.requestWeather(weatherId);
                     }
 
                 }
@@ -159,11 +176,11 @@ public class ChooseAreaFragment extends Fragment {
             public void onClick(View view) {
 
                 getLoc();
-                if (getActivity() instanceof WeatherActivity) {
-                    WeatherActivity activity = (WeatherActivity) getActivity();
-                    activity.drawerLayout.closeDrawers();
-                    activity.swipeRefresh.setRefreshing(true);
-                    activity.requestVirtualWeather();
+                if (getParentFragment() instanceof WeatherFragment) {
+                    WeatherFragment weatherFragment = (WeatherFragment) getParentFragment();
+                    weatherFragment.drawerLayout.closeDrawers();
+                    weatherFragment.swipeRefresh.setRefreshing(true);
+                    weatherFragment.requestVirtualWeather();
                 }
 
 
@@ -342,16 +359,16 @@ public class ChooseAreaFragment extends Fragment {
             String latitude = location.getLatitude() + "";
             String longitude = location.getLongitude() + "";
             if (getActivity() instanceof MainActivity) {
-                Intent intent = new Intent(getActivity(), WeatherActivity.class);
+                Intent intent = new Intent(getActivity(), WeatherFragment.class);
                 intent.putExtra("weather_latitude", latitude);
                 intent.putExtra("weather_longitude", longitude);
                 startActivity(intent);
                 getActivity().finish();
-            } else if (getActivity() instanceof WeatherActivity) {
-                WeatherActivity activity = (WeatherActivity) getActivity();
-                activity.drawerLayout.closeDrawers();
-                activity.swipeRefresh.setRefreshing(true);
-                activity.requestWeather(latitude, longitude);
+            } else if (getParentFragment() instanceof WeatherFragment) {
+                WeatherFragment weatherFragment = (WeatherFragment) getParentFragment();
+                weatherFragment.drawerLayout.closeDrawers();
+                weatherFragment.swipeRefresh.setRefreshing(true);
+                weatherFragment.requestWeather(latitude, longitude);
             }
             return ;
         }else {
@@ -379,16 +396,16 @@ public class ChooseAreaFragment extends Fragment {
                     String latitude = location.getLatitude() + "";
                     String longitude = location.getLongitude() + "";
                     if (getActivity() instanceof MainActivity) {
-                        Intent intent = new Intent(getActivity(), WeatherActivity.class);
+                        Intent intent = new Intent(getActivity(), WeatherFragment.class);
                         intent.putExtra("weather_latitude", lat);
                         intent.putExtra("weather_longitude", lon);
                         startActivity(intent);
                         getActivity().finish();
-                    } else if (getActivity() instanceof WeatherActivity) {
-                        WeatherActivity activity = (WeatherActivity) getActivity();
-                        activity.drawerLayout.closeDrawers();
-                        activity.swipeRefresh.setRefreshing(true);
-                        activity.requestWeather(latitude, longitude);
+                    } else if (getParentFragment() instanceof WeatherFragment) {
+                    WeatherFragment weatherFragment = (WeatherFragment) getParentFragment();
+                    weatherFragment.drawerLayout.closeDrawers();
+                    weatherFragment.swipeRefresh.setRefreshing(true);
+                    weatherFragment.requestWeather(latitude, longitude);
                     }
                 }
 
