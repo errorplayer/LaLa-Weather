@@ -18,6 +18,16 @@ public class County extends DataSupport {
 
     private String NowTemperature;
 
+    private String NowStatus;
+
+    public String getNowStatus() {
+        return NowStatus;
+    }
+
+    public void setNowStatus(String nowStatus) {
+        NowStatus = nowStatus;
+    }
+
     public String getNowTemperature() {
         return NowTemperature;
     }

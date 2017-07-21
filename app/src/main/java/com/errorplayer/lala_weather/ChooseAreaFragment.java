@@ -117,8 +117,8 @@ public class ChooseAreaFragment extends Fragment {
         adapter = new SimpleAdapter(listView.getContext(),
                 dataList,
                 R.layout.county_item,
-                new String[]{"nowtemperature", "countyname", "weatherid"},
-                new int[]{R.id.now_temperature, R.id.county_name, R.id.weather_id});
+                new String[]{"nowtemperature", "countyname", "nowstatus","weatherid"},
+                new int[]{R.id.now_temperature, R.id.county_name,R.id.county_nowstatus, R.id.weather_id});
         listView.setAdapter(adapter);
         return view;
     }
@@ -230,6 +230,7 @@ public class ChooseAreaFragment extends Fragment {
                                     item.put("nowtemperature",weather.now.temperature);
                                     item.put("countyname",weather.basic.cityName);
                                     item.put("weatherid",weather.basic.weatherId);
+                                    item.put("nowstatus",weather.now.more.info);
 
                                     dataList.add(item);
 
