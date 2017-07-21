@@ -16,6 +16,16 @@ public class County extends DataSupport {
 
     private int cityId;
 
+    private String NowTemperature;
+
+    public String getNowTemperature() {
+        return NowTemperature;
+    }
+
+    public void setNowTemperature(String nowTemperature) {
+        NowTemperature = nowTemperature;
+    }
+
     public int getId() {
         return id;
     }

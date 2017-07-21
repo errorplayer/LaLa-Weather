@@ -32,7 +32,6 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(this,WeatherActivity.class);
             startActivity(intent);
             finish();
-            //happy;
         }
     }
 }

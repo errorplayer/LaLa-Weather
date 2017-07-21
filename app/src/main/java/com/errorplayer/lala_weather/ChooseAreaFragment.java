@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
@@ -11,8 +12,10 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,12 +24,14 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.errorplayer.lala_weather.db.City;
 import com.errorplayer.lala_weather.db.County;
 import com.errorplayer.lala_weather.db.Province;
+import com.errorplayer.lala_weather.gson.WeatherInfo;
 import com.errorplayer.lala_weather.util.HttpUtil;
 import com.errorplayer.lala_weather.util.Utility;
 
@@ -34,6 +39,7 @@ import org.litepal.crud.DataSupport;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import okhttp3.Call;
@@ -49,12 +55,10 @@ import static android.content.Context.LOCATION_SERVICE;
 
 public class ChooseAreaFragment extends Fragment {
 
-    private double latitude = 0.0;
-    private double longitude = 0.0;
+
 
     private LocationListener locationListener;
 
-    private int locateFlag;
 
     private LocationManager locationManager;
 
@@ -78,9 +82,14 @@ public class ChooseAreaFragment extends Fragment {
 
     private ListView listView;
 
-    private ArrayAdapter<String> adapter;
+    //private ArrayAdapter<String> adapter;
 
-    private List<String> dataList = new ArrayList<>();
+    private SimpleAdapter adapter;
+
+
+
+
+    private List<HashMap<String ,Object>> dataList = new ArrayList<>();
 
     private List<Province> provinceList;
 
@@ -95,6 +104,7 @@ public class ChooseAreaFragment extends Fragment {
     private int currentLevel;
 
 
+
     @Override
     public View onCreateView(LayoutInflater inflater,  ViewGroup container, Bundle savedInstanceState) {
 
@@ -103,7 +113,12 @@ public class ChooseAreaFragment extends Fragment {
         titleText = (TextView) view.findViewById(R.id.title_text);
         backButton = (Button) view.findViewById(R.id.back_button);
         listView = (ListView) view.findViewById(R.id.list_view);
-        adapter = new ArrayAdapter<>(listView.getContext(),android.R.layout.simple_list_item_1,dataList);
+        //adapter = new ArrayAdapter<>(listView.getContext(),android.R.layout.simple_list_item_1,dataList);
+        adapter = new SimpleAdapter(listView.getContext(),
+                dataList,
+                R.layout.county_item,
+                new String[]{"nowtemperature", "countyname", "weatherid"},
+                new int[]{R.id.now_temperature, R.id.county_name, R.id.weather_id});
         listView.setAdapter(adapter);
         return view;
     }
@@ -125,7 +140,9 @@ public class ChooseAreaFragment extends Fragment {
                     selectedCity = cityList.get(position);
                     queryCounties();
                 } else if (currentLevel == LEVEL_COUNTY) {
-                    String weatherId = countyList.get(position).getWeatherId();
+                    HashMap<String, Object> data = (HashMap<String, Object>) listView.getItemAtPosition(position);
+                    String weatherId = data.get("weatherid").toString();
+
                     if (getActivity() instanceof MainActivity) {
                         Intent intent = new Intent(getActivity(), WeatherActivity.class);
                         intent.putExtra("weather_id", weatherId);
@@ -182,11 +199,52 @@ public class ChooseAreaFragment extends Fragment {
         if (countyList.size() > 0)
         {
             dataList.clear();
-            for (County county : countyList)
+            for (int index = 0; index != countyList.size();index++)
             {
-                dataList.add(county.getCountyName());
+                String weatherUrl = "https://free-api.heweather.com/v5/weather?city="+countyList.get(index).getWeatherId()+"&key=8ac5c8e5219b440694de3be0ff010fb2";
+                HttpUtil.sendOkHttpRequest(weatherUrl, new Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        e.printStackTrace();
+                        Log.d(TAG, "queryCounties: http网络请求失败");
+
+                    }
+
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        final String responseText = response.body().string();
+                        final WeatherInfo weather = Utility.handleWeatherResponse(responseText);
+
+
+
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (weather != null&&"ok".equals(weather.status) )
+                                {
+
+                                    Log.d(TAG, weather.basic.cityName+weather.now.temperature);
+                                    String content = "";
+                                    content = weather.now.temperature+"    "+weather.basic.cityName+"      ";
+                                    HashMap<String, Object> item = new HashMap<String, Object>();
+                                    item.put("nowtemperature",weather.now.temperature);
+                                    item.put("countyname",weather.basic.cityName);
+                                    item.put("weatherid",weather.basic.weatherId);
+
+                                    dataList.add(item);
+
+                                    adapter.notifyDataSetChanged();
+                                }
+
+                            }
+                        });
+
+                    }
+                });
+
+
             }
-            adapter.notifyDataSetChanged();
+
             listView.setSelection(0);
             currentLevel = LEVEL_COUNTY;
         }else {
@@ -208,7 +266,13 @@ public class ChooseAreaFragment extends Fragment {
             dataList.clear();
             for (City city : cityList)
             {
-                dataList.add(city.getCityName());
+                HashMap<String, Object> item = new HashMap<String, Object>();
+                item.put("nowtemperature","  ");
+                item.put("countyname",city.getCityName());
+                item.put("weatherid","");
+
+                dataList.add(item);
+
             }
             adapter.notifyDataSetChanged();
             listView.setSelection(0);
@@ -230,7 +294,12 @@ public class ChooseAreaFragment extends Fragment {
             dataList.clear();
             for(Province province:provinceList)
             {
-                dataList.add(province.getProvinceName());
+                HashMap<String, Object> item = new HashMap<String, Object>();
+                item.put("nowtemperature","  ");
+                item.put("countyname",province.getProvinceName());
+                item.put("weatherid","");
+
+                dataList.add(item);
             }
             adapter.notifyDataSetChanged();
             listView.setSelection(0);
@@ -313,6 +382,8 @@ public class ChooseAreaFragment extends Fragment {
         }
         progressDialog.show();
     }
+
+
 
 
 
