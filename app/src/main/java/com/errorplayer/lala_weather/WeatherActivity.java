@@ -1,6 +1,8 @@
 package com.errorplayer.lala_weather;
 
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -18,6 +20,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.errorplayer.lala_weather.gson.Forecast;
 import com.errorplayer.lala_weather.gson.WeatherInfo;
 import com.errorplayer.lala_weather.util.HttpUtil;
@@ -75,16 +78,28 @@ public class WeatherActivity extends AppCompatActivity {
 
     private TextView uvText;
 
+    private ImageView bingPicImg;
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (Build.VERSION.SDK_INT >= 21)
+        {
+            View decorView = getWindow().getDecorView();
+            decorView.setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE|
+                            View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+            getWindow().setStatusBarColor(Color.TRANSPARENT);
+        }
         setContentView(R.layout.activity_weather);
         lastLocationCache_la = "";
         lastLocationCache_lo = "";
         swipeRefresh = (SwipeRefreshLayout)findViewById(R.id.swipe_refresh);
         swipeRefresh.setColorSchemeResources(R.color.colorAccent);
+
+        bingPicImg = (ImageView)findViewById(R.id.bing_pic_img);
 
         drawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
         naviButton = (Button)findViewById(R.id.navi_button);
@@ -105,7 +120,17 @@ public class WeatherActivity extends AppCompatActivity {
         fluText = (TextView) findViewById(R.id.flu_text);
         uvText = (TextView) findViewById(R.id.uv_text);
 
+
+
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+        String bingPic = prefs.getString("bing_pic",null);
+        if (bingPic != null)
+        {
+            Glide.with(this).load(bingPic).into(bingPicImg);
+        }else {
+            loadBingPic();
+        }
         String weatherString = prefs.getString("weather",null);
         if (weatherString != null)
         {
@@ -140,6 +165,32 @@ public class WeatherActivity extends AppCompatActivity {
 
 
     }
+
+    private void loadBingPic() {
+        String requestBingPic = "http://guolin.tech/api/bing_pic";
+        HttpUtil.sendOkHttpRequest(requestBingPic, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                final String bingPic = response.body().string();
+                SharedPreferences.Editor editor = PreferenceManager.
+                        getDefaultSharedPreferences(WeatherActivity.this).edit();
+                editor.putString("bing_pic",bingPic);
+                editor.apply();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Glide.with(WeatherActivity.this).load(bingPic).into(bingPicImg);
+                    }
+                });
+            }
+        });
+    }
+
     public void requestWeather(final String weatherId) {
         String weatherUrl = "https://free-api.heweather.com/v5/weather?city="+weatherId+"&key=8ac5c8e5219b440694de3be0ff010fb2";
         HttpUtil.sendOkHttpRequest(weatherUrl, new Callback() {
@@ -180,6 +231,7 @@ public class WeatherActivity extends AppCompatActivity {
                 });
             }
         });
+        loadBingPic();
     }
     public void requestWeather(final String latitude,final String longitude) {
         if (!TextUtils.isEmpty(latitude)&&!TextUtils.isEmpty(longitude)) {
