@@ -47,6 +47,8 @@
 
                     <include layout="@layout/weather_suggestion"/>
 
+                    <include layout="@layout/weather_news_board"/>
+
 
                 </LinearLayout>
             </ScrollView>

@@ -1,18 +1,22 @@
 package com.errorplayer.lala_weather.util;
 
-import android.nfc.TagLostException;
 import android.text.TextUtils;
 import android.util.Log;
 
 import com.errorplayer.lala_weather.db.City;
 import com.errorplayer.lala_weather.db.County;
 import com.errorplayer.lala_weather.db.Province;
+import com.errorplayer.lala_weather.gson.GuardianNewsItem;
+import com.errorplayer.lala_weather.gson.GuardianRecv;
 import com.errorplayer.lala_weather.gson.WeatherInfo;
 import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by linze on 2017/7/7.
@@ -93,6 +97,26 @@ public class Utility {
             }
         }
         return false;
+    }
+
+    public static List<GuardianNewsItem> handleGuardianResponse(String response)
+    {
+        GuardianRecv Recv = new GuardianRecv();
+        List<GuardianNewsItem> resultsList = new ArrayList<>();
+        if (!TextUtils.isEmpty(response))
+        {
+            try{
+                 Gson gson = new Gson();
+                Recv = gson.fromJson(response,GuardianRecv.class);
+                resultsList = Recv.guardianResponse.GuadianNewsItemList;
+                return resultsList;
+            }catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+            return null;
+        }
+        return null;
     }
 
     public static WeatherInfo handleWeatherResponse(String response)

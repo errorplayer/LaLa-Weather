@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="15dp"
+    android:background="@drawable/layout_border"
+    >
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="15dp"
+        android:text="今日要闻 "
+        android:textColor="#fff"
+        android:textSize="25sp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:text="英国《卫报》提供新闻"
+        android:textColor="#f00"
+        android:textSize="15sp"/>
+
+    <TextView
+        android:id="@+id/guardian_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#fff"
+        android:layout_margin="15dp"
+        android:clickable="true"
+        android:textSize="20sp"/>
+
+    <TextView
+        android:id="@+id/guardian_2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#fff"
+        android:layout_margin="15dp"
+        android:clickable="true"
+        android:textSize="20sp"/>
+
+    <TextView
+        android:id="@+id/guardian_3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#fff"
+        android:layout_margin="15dp"
+        android:clickable="true"
+        android:textSize="20sp"/>
+
+    <TextView
+        android:id="@+id/guardian_4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#fff"
+        android:layout_margin="15dp"
+        android:clickable="true"
+        android:textSize="20sp"/>
+
+
+
+    <TextView
+        android:id="@+id/guardian_5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#fff"
+        android:layout_margin="15dp"
+        android:clickable="true"
+        android:textSize="20sp"/>
+
+    <TextView
+        android:id="@+id/guardian_6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#fff"
+        android:layout_margin="15dp"
+        android:clickable="true"
+        android:textSize="20sp"/>
+
+</LinearLayout>

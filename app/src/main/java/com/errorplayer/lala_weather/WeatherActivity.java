@@ -1,7 +1,9 @@
 package com.errorplayer.lala_weather;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.v4.view.GravityCompat;
@@ -13,6 +15,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -22,18 +25,18 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.errorplayer.lala_weather.gson.Forecast;
+import com.errorplayer.lala_weather.gson.GuardianNewsItem;
 import com.errorplayer.lala_weather.gson.WeatherInfo;
 import com.errorplayer.lala_weather.util.HttpUtil;
 import com.errorplayer.lala_weather.util.Utility;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
-
-import static android.R.attr.value;
-import static com.errorplayer.lala_weather.R.color.colorAccent;
 
 public class WeatherActivity extends AppCompatActivity {
     private String lastLocationCache_la;
@@ -80,6 +83,22 @@ public class WeatherActivity extends AppCompatActivity {
 
     private ImageView bingPicImg;
 
+    private WebView guardianNewPage;
+
+    private TextView News1;
+
+    private TextView News2;
+
+    private TextView News3;
+
+    private TextView News4;
+
+    private TextView News5;
+
+    private List<GuardianNewsItem> StorageNews = new ArrayList<>();
+
+
+
 
 
     @Override
@@ -120,6 +139,22 @@ public class WeatherActivity extends AppCompatActivity {
         fluText = (TextView) findViewById(R.id.flu_text);
         uvText = (TextView) findViewById(R.id.uv_text);
 
+        News1 = (TextView) findViewById(R.id.guardian_1);
+        News2 = (TextView) findViewById(R.id.guardian_2);
+        News3 = (TextView) findViewById(R.id.guardian_3);
+        News4 = (TextView) findViewById(R.id.guardian_4);
+        News5 = (TextView) findViewById(R.id.guardian_5);
+        News1.setClickable(true);
+        News2.setClickable(true);
+        News3.setClickable(true);
+        News4.setClickable(true);
+        News5.setClickable(true);
+
+
+
+        //News6 = (TextView) findViewById(R.id.guardian_2);
+        //guardianNewPage  = (WebView) findViewById(R.id.guardian_page_webview);
+        //guardianNewPage.setWebViewClient(new WebViewClient());
 
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -161,6 +196,7 @@ public class WeatherActivity extends AppCompatActivity {
                 drawerLayout.openDrawer(GravityCompat.START);
             }
         });
+        requestNews();
 
 
 
@@ -232,6 +268,7 @@ public class WeatherActivity extends AppCompatActivity {
             }
         });
         loadBingPic();
+        requestNews();
     }
     public void requestWeather(final String latitude,final String longitude) {
         if (!TextUtils.isEmpty(latitude)&&!TextUtils.isEmpty(longitude)) {
@@ -282,10 +319,119 @@ public class WeatherActivity extends AppCompatActivity {
             Toast.makeText(WeatherActivity.this,"请稍后再试。",Toast.LENGTH_SHORT).show();
             swipeRefresh.setRefreshing(false);
         }
+        loadBingPic();
     }
     public void requestVirtualWeather()
     {
         requestWeather(lastLocationCache_la,lastLocationCache_lo);
+    }
+    public void requestNews() {
+        final String NewsUrl = "https://content.guardianapis.com/search?tag=politics/politics|environment/energyefficiency&api-key=2c26debe-2b38-470c-a967-ad52b9c210dc";
+        HttpUtil.sendOkHttpRequest(NewsUrl, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(WeatherActivity.this,"获取新闻信息失败",
+                                Toast.LENGTH_SHORT).show();
+                        swipeRefresh.setRefreshing(false);
+
+                    }
+                });
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                final String responseText  = response.body().string();
+                final List<GuardianNewsItem> News = Utility.handleGuardianResponse(responseText);
+                //Log.d("news", News.toString());
+                StorageNews = News;
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (News != null && News.size() != 0)
+                        {
+                            int num = News.size();
+                            if (num >= 5 )
+                            {
+                                String showContent[] = News.get(0).webPublicationDate.split("T|Z");
+                                String dateContent[] = showContent[0].split("-");
+                                News1.setText("["+dateContent[1]+"月"+dateContent[2]+"日"+showContent[1]+"]   "+News.get(0).webTitle);
+                                showContent = News.get(1).webPublicationDate.split("T|Z");
+                                dateContent = showContent[0].split("-");
+                                News2.setText("["+dateContent[1]+"月"+dateContent[2]+"日"+showContent[1]+"]   "+News.get(1).webTitle);
+                                showContent = News.get(2).webPublicationDate.split("T|Z");
+                                dateContent = showContent[0].split("-");
+                                News3.setText("["+dateContent[1]+"月"+dateContent[2]+"日"+showContent[1]+"]   "+News.get(2).webTitle);
+                                showContent = News.get(3).webPublicationDate.split("T|Z");
+                                dateContent = showContent[0].split("-");
+                                News4.setText("["+dateContent[1]+"月"+dateContent[2]+"日"+showContent[1]+"]   "+News.get(3).webTitle);
+                                showContent = News.get(4).webPublicationDate.split("T|Z");
+                                dateContent = showContent[0].split("-");
+                                News5.setText("["+dateContent[1]+"月"+dateContent[2]+"日"+showContent[1]+"]   "+News.get(4).webTitle);
+
+                            }
+
+                        }
+
+                        swipeRefresh.setRefreshing(false);
+                    }
+                });
+
+            }
+        });
+        News1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(WeatherActivity.this,NewsBrowserPage.class);
+                intent.putExtra("NewsURL", StorageNews.get(0).webUrl);
+                startActivity(intent);
+                //Log.d("NNNNN",StorageNews.toString());
+            }
+        });
+        News2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(WeatherActivity.this,NewsBrowserPage.class);
+                intent.putExtra("NewsURL", StorageNews.get(1).webUrl);
+                startActivity(intent);
+                //Log.d("NNNNN",StorageNews.toString());
+            }
+        });
+        News3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(WeatherActivity.this,NewsBrowserPage.class);
+                intent.putExtra("NewsURL", StorageNews.get(2).webUrl);
+                startActivity(intent);
+                //Log.d("NNNNN",StorageNews.toString());
+            }
+        });
+        News4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(WeatherActivity.this,NewsBrowserPage.class);
+                intent.putExtra("NewsURL", StorageNews.get(3).webUrl);
+                startActivity(intent);
+                //Log.d("NNNNN",StorageNews.toString());
+            }
+        });
+        News5.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(WeatherActivity.this,NewsBrowserPage.class);
+                intent.putExtra("NewsURL", StorageNews.get(4).webUrl);
+                startActivity(intent);
+                //Log.d("NNNNN",StorageNews.toString());
+            }
+        });
     }
     private void showWeatherInfo(WeatherInfo weather) {
         String cityName = weather.basic.cityName;
