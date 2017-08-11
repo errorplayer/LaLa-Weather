@@ -23,6 +23,71 @@
         android:textColor="#f00"
         android:textSize="15sp"/>
 
+    <RadioGroup
+        android:id="@+id/news_sort_select"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+
+            <RadioButton
+            android:id="@+id/environment_news"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:textColor="#fff"
+
+            android:text="环境" />
+            <RadioButton
+            android:id="@+id/politics_news"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+                android:textColor="#fff"
+
+                android:text="政治"/>
+            <RadioButton
+            android:id="@+id/food_drink_news"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+                android:textColor="#fff"
+
+                android:text="饮食"/>
+
+
+
+            <RadioButton
+            android:id="@+id/climate_change_news"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+                android:textColor="#fff"
+
+                android:text="气候"/>
+
+
+        <RadioButton
+            android:id="@+id/stock_markets_news"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:textColor="#fff"
+
+            android:text="股市"/>
+        <RadioButton
+            android:id="@+id/health_wellbeing_news"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:textColor="#fff"
+
+            android:text="健身"/>
+
+
+
+    </RadioGroup>
+
     <TextView
         android:id="@+id/guardian_1"
         android:layout_width="wrap_content"

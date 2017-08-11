@@ -3,7 +3,7 @@ package com.errorplayer.lala_weather;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.net.Uri;
+
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.v4.view.GravityCompat;
@@ -19,6 +19,9 @@ import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.*;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -97,6 +100,28 @@ public class WeatherActivity extends AppCompatActivity {
 
     private List<GuardianNewsItem> StorageNews = new ArrayList<>();
 
+    private String Environment_Address = "environment/pollution";
+
+    private String FittingBody_Address = "lifeandstyle/health-and-wellbeing";
+
+    private String Politics_Address = "politics/politics";
+
+    private String Food_Address = "lifeandstyle/food-and-drink";
+
+    private String ClimateChange_Address = "environment/climate-change";
+
+    private String StockMarketings_Address = "business/stock-markets";
+
+    private RadioGroup News_Select_Group;
+    private RadioButton cliamte;
+    private RadioButton politics;
+    private RadioButton stock;
+    private RadioButton fitting;
+    private RadioButton food;
+    private RadioButton pollution;
+
+    private String Memory_News_Select;
+
 
 
 
@@ -104,26 +129,26 @@ public class WeatherActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (Build.VERSION.SDK_INT >= 21)
-        {
+        if (Build.VERSION.SDK_INT >= 21) {
             View decorView = getWindow().getDecorView();
             decorView.setSystemUiVisibility(
-                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE|
+                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
                             View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
             getWindow().setStatusBarColor(Color.TRANSPARENT);
         }
         setContentView(R.layout.activity_weather);
         lastLocationCache_la = "";
         lastLocationCache_lo = "";
-        swipeRefresh = (SwipeRefreshLayout)findViewById(R.id.swipe_refresh);
+        Memory_News_Select = "politics/politics";
+        swipeRefresh = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
         swipeRefresh.setColorSchemeResources(R.color.colorAccent);
 
-        bingPicImg = (ImageView)findViewById(R.id.bing_pic_img);
+        bingPicImg = (ImageView) findViewById(R.id.bing_pic_img);
 
-        drawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
-        naviButton = (Button)findViewById(R.id.navi_button);
-        weatherLayout = (ScrollView)findViewById(R.id.weather_layout);
-        forecastLayout = (LinearLayout)findViewById(R.id.forecast_layout);
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        naviButton = (Button) findViewById(R.id.navi_button);
+        weatherLayout = (ScrollView) findViewById(R.id.weather_layout);
+        forecastLayout = (LinearLayout) findViewById(R.id.forecast_layout);
         titleCity = (TextView) findViewById(R.id.title_city);
         titleUpdateTime = (TextView) findViewById(R.id.title_update_time);
         degreeText = (TextView) findViewById(R.id.degree_text);
@@ -150,8 +175,37 @@ public class WeatherActivity extends AppCompatActivity {
         News4.setClickable(true);
         News5.setClickable(true);
 
+        News_Select_Group = (RadioGroup) findViewById(R.id.news_sort_select);
+        cliamte = (RadioButton) findViewById(R.id.climate_change_news);
+        food = (RadioButton) findViewById(R.id.food_drink_news);
+        politics = (RadioButton) findViewById(R.id.politics_news);
+        pollution = (RadioButton) findViewById(R.id.environment_news);
+        stock = (RadioButton) findViewById(R.id.stock_markets_news);
+        fitting = (RadioButton) findViewById(R.id.health_wellbeing_news);
 
-
+        News_Select_Group.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                // TODO Auto-generated method stub
+                if ( cliamte.getId() ==checkedId) {
+                    Memory_News_Select = ClimateChange_Address;
+                    Log.d("weather", "cliamte ");
+                    requestNews();
+                } else if (checkedId == stock.getId()) {
+                    Memory_News_Select = StockMarketings_Address;
+                    requestNews();
+                } else if (checkedId == fitting.getId()) {
+                    Memory_News_Select = FittingBody_Address;
+                    requestNews();
+                } else if (checkedId == pollution.getId()) {
+                    Memory_News_Select = Environment_Address;
+                    requestNews();
+                } else if (checkedId == politics.getId()) {
+                    Memory_News_Select = Politics_Address;
+                    requestNews();
+                }
+            }
+        });
         //News6 = (TextView) findViewById(R.id.guardian_2);
         //guardianNewPage  = (WebView) findViewById(R.id.guardian_page_webview);
         //guardianNewPage.setWebViewClient(new WebViewClient());
@@ -159,29 +213,26 @@ public class WeatherActivity extends AppCompatActivity {
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
-        String bingPic = prefs.getString("bing_pic",null);
-        if (bingPic != null)
-        {
+        String bingPic = prefs.getString("bing_pic", null);
+        if (bingPic != null) {
             Glide.with(this).load(bingPic).into(bingPicImg);
-        }else {
+        } else {
             loadBingPic();
         }
-        String weatherString = prefs.getString("weather",null);
-        if (weatherString != null)
-        {
+        String weatherString = prefs.getString("weather", null);
+        if (weatherString != null) {
             WeatherInfo weather = Utility.handleWeatherResponse(weatherString);
-            mWeatherId =weather.basic.weatherId;
+            mWeatherId = weather.basic.weatherId;
             showWeatherInfo(weather);
-        }else if (!TextUtils.isEmpty(getIntent().getStringExtra("weather_id")) ){
+        } else if (!TextUtils.isEmpty(getIntent().getStringExtra("weather_id"))) {
             mWeatherId = getIntent().getStringExtra("weather_id");
             weatherLayout.setVisibility(View.INVISIBLE);
             requestWeather(mWeatherId);
-        }else if(!TextUtils.isEmpty(getIntent().getStringExtra("weather_latitude")))
-        {
-            String latitude = getIntent().getStringExtra("weather_latitude")+"";
-            String longitude = getIntent().getStringExtra("weather_longitude")+"";
+        } else if (!TextUtils.isEmpty(getIntent().getStringExtra("weather_latitude"))) {
+            String latitude = getIntent().getStringExtra("weather_latitude") + "";
+            String longitude = getIntent().getStringExtra("weather_longitude") + "";
             weatherLayout.setVisibility(View.INVISIBLE);
-            requestWeather(latitude,longitude);
+            requestWeather(latitude, longitude);
         }
         swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -199,8 +250,10 @@ public class WeatherActivity extends AppCompatActivity {
         requestNews();
 
 
-
     }
+
+
+
 
     private void loadBingPic() {
         String requestBingPic = "http://guolin.tech/api/bing_pic";
@@ -326,7 +379,8 @@ public class WeatherActivity extends AppCompatActivity {
         requestWeather(lastLocationCache_la,lastLocationCache_lo);
     }
     public void requestNews() {
-        final String NewsUrl = "https://content.guardianapis.com/search?tag=politics/politics|environment/energyefficiency&api-key=2c26debe-2b38-470c-a967-ad52b9c210dc";
+
+        String NewsUrl = "https://content.guardianapis.com/search?tag="+Memory_News_Select+"&api-key=2c26debe-2b38-470c-a967-ad52b9c210dc";
         HttpUtil.sendOkHttpRequest(NewsUrl, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
