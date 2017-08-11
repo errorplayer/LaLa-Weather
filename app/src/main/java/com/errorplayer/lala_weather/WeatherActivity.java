@@ -203,6 +203,9 @@ public class WeatherActivity extends AppCompatActivity {
                 } else if (checkedId == politics.getId()) {
                     Memory_News_Select = Politics_Address;
                     requestNews();
+                }else if (checkedId == food.getId()) {
+                    Memory_News_Select = Food_Address;
+                    requestNews();
                 }
             }
         });
