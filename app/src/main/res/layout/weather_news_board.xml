@@ -18,52 +18,53 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="15dp"
-        android:text="英国《卫报》提供新闻"
+        android:layout_marginLeft="7dp"
+        android:layout_marginBottom="7dp"
+        android:text="《卫报》提供新闻，服务器在国外，加载可能缓慢"
         android:textColor="#f00"
         android:textSize="15sp"/>
 
-    <RadioGroup
+    <com.errorplayer.lala_weather.util.AppearanceTools.FlowRadioGroup
         android:id="@+id/news_sort_select"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
+
 
 
             <RadioButton
             android:id="@+id/environment_news"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
+            android:layout_marginLeft="30dp"
             android:textColor="#fff"
-
+            android:textSize="20dp"
             android:text="环境" />
             <RadioButton
             android:id="@+id/politics_news"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
+            android:layout_marginLeft="30dp"
                 android:textColor="#fff"
-
+                android:textSize="20dp"
                 android:text="政治"/>
             <RadioButton
             android:id="@+id/food_drink_news"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
+            android:layout_marginLeft="30dp"
                 android:textColor="#fff"
-
+                android:textSize="20dp"
                 android:text="饮食"/>
-
 
 
             <RadioButton
             android:id="@+id/climate_change_news"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
+            android:layout_marginLeft="30dp"
                 android:textColor="#fff"
-
+                android:textSize="20dp"
                 android:text="气候"/>
 
 
@@ -71,22 +72,40 @@
             android:id="@+id/stock_markets_news"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
+            android:layout_marginLeft="30dp"
             android:textColor="#fff"
-
+            android:textSize="20dp"
             android:text="股市"/>
         <RadioButton
             android:id="@+id/health_wellbeing_news"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
+            android:layout_marginLeft="30dp"
             android:textColor="#fff"
-
+            android:textSize="20dp"
             android:text="健身"/>
+        <RadioButton
+            android:id="@+id/family_relationship"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:textColor="#fff"
+            android:textSize="20dp"
+            android:text="家庭"/>
+
+        <RadioButton
+            android:id="@+id/career_business"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:textColor="#fff"
+            android:textSize="20dp"
+            android:text="职业"/>
 
 
 
-    </RadioGroup>
+
+    </com.errorplayer.lala_weather.util.AppearanceTools.FlowRadioGroup>
 
     <TextView
         android:id="@+id/guardian_1"

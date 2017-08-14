@@ -43,7 +43,9 @@
 
                     <include layout="@layout/forecast"/>
 
-                    <include layout="@layout/weather_aqi"/>
+                    <include layout="@layout/weather_aqi"
+                        android:visibility="gone"
+                        android:id="@+id/AQI_BOARD"/>
 
                     <include layout="@layout/weather_suggestion"/>
 

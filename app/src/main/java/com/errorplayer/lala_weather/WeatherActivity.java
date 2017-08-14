@@ -66,6 +66,8 @@ public class WeatherActivity extends AppCompatActivity {
 
     private LinearLayout forecastLayout;
 
+    //private LinearLayout layout_AqiBoard=(LinearLayout)findViewById(R.id.AQI_BOARD);
+
     private TextView qltyText;
 
     private TextView pm25Text;
@@ -112,6 +114,10 @@ public class WeatherActivity extends AppCompatActivity {
 
     private String StockMarketings_Address = "business/stock-markets";
 
+    private String Family_Address = "lifeandstyle/family";
+
+    private String Career_Address = "money/work-and-careers";
+
     private RadioGroup News_Select_Group;
     private RadioButton cliamte;
     private RadioButton politics;
@@ -119,6 +125,8 @@ public class WeatherActivity extends AppCompatActivity {
     private RadioButton fitting;
     private RadioButton food;
     private RadioButton pollution;
+    private RadioButton love;
+    private RadioButton career;
 
     private String Memory_News_Select;
 
@@ -182,7 +190,8 @@ public class WeatherActivity extends AppCompatActivity {
         pollution = (RadioButton) findViewById(R.id.environment_news);
         stock = (RadioButton) findViewById(R.id.stock_markets_news);
         fitting = (RadioButton) findViewById(R.id.health_wellbeing_news);
-
+        love = (RadioButton)findViewById(R.id.family_relationship);
+        career = (RadioButton)findViewById(R.id.career_business);
         News_Select_Group.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -205,6 +214,12 @@ public class WeatherActivity extends AppCompatActivity {
                     requestNews();
                 }else if (checkedId == food.getId()) {
                     Memory_News_Select = Food_Address;
+                    requestNews();
+                }else if (checkedId == love.getId()) {
+                    Memory_News_Select = Family_Address;
+                    requestNews();
+                }else if (checkedId == career.getId()) {
+                    Memory_News_Select = Career_Address;
                     requestNews();
                 }
             }
@@ -541,10 +556,12 @@ public class WeatherActivity extends AppCompatActivity {
                 qltyText.setTextSize(35);
             qltyText.setText(weather.aqi.city.qlty);
             pm25Text.setText(weather.aqi.city.pm25);
+            findViewById(R.id.AQI_BOARD).setVisibility(View.VISIBLE);
         }else
         {
             qltyText.setText("无");
             pm25Text.setText("无");
+            findViewById(R.id.AQI_BOARD).setVisibility(View.GONE);
         }
 
         String comfort = "舒适度："+weather.suggestion.comfort.Info;
