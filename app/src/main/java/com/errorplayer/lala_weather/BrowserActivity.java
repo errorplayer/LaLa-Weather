@@ -168,14 +168,28 @@ public class BrowserActivity extends Activity {
     @Override
     public void onBackPressed() {
 //        super.onBackPressed();
-        if(webView.canGoBack()) {
-            // 返回上一页面
-            webView.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK );
-            webView.goBack();
+//        if(webView.canGoBack()) {
+//            // 返回上一页面
+//            webView.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK );
+//            webView.goBack();
+//
+//        }
 
+        if (webView != null) {
+            //如果h5页面可能返回，跳转到上个页面
+            if (webView.canGoBack()) {
+                webView.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK );
+                webView.goBack();
+            } else {
+                //不能返回上个页面，直接finish当前Activity
+                finish();
+            }
+        } else {
+            finish();
         }
-
     }
+
+
 
     @Override
     protected void onDestroy() {
