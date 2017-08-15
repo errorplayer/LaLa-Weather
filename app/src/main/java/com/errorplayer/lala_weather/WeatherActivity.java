@@ -342,7 +342,7 @@ public class WeatherActivity extends AppCompatActivity {
                             mWeatherId = weatherId;
 
                         }
-                        init();
+                        //init();
 
                         swipeRefresh.setRefreshing(false);
                     }
@@ -389,7 +389,7 @@ public class WeatherActivity extends AppCompatActivity {
                                 mWeatherId = weather.basic.weatherId;
 
                             }
-                            init();
+                            //init();
                             swipeRefresh.setRefreshing(false);
                         }
                     });
@@ -410,7 +410,7 @@ public class WeatherActivity extends AppCompatActivity {
         requestWeather(lastLocationCache_la,lastLocationCache_lo);
     }
     public void requestNews() {
-
+        init();
         String NewsUrl = "https://content.guardianapis.com/search?tag="+Memory_News_Select+"&api-key=2c26debe-2b38-470c-a967-ad52b9c210dc";
         HttpUtil.sendOkHttpRequest(NewsUrl, new Callback() {
             @Override

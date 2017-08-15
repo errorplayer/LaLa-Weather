@@ -64,6 +64,7 @@ public class BrowserActivity extends Activity {
 
     private SonicSession sonicSession;
 
+    private WebView webView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -105,9 +106,9 @@ public class BrowserActivity extends Activity {
         // in the real world, the init flow may cost a long time as startup
         // runtime、init configs....
         setContentView(R.layout.guardian_page);
+        webView = (WebView) findViewById(R.id.guardian_page_webview);
 
         // init webview
-        WebView webView = (WebView) findViewById(R.id.guardian_page_webview);
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public void onPageFinished(WebView view, String url) {
@@ -140,7 +141,7 @@ public class BrowserActivity extends Activity {
         // WebView.html#addJavascriptInterface(java.lang.Object, java.lang.String)
         webSettings.setJavaScriptEnabled(false);
         webView.removeJavascriptInterface("searchBoxJavaBridge_");
-        intent.putExtra(SonicJavaScriptInterface.PARAM_LOAD_URL_TIME, System.currentTimeMillis());
+        //intent.putExtra(SonicJavaScriptInterface.PARAM_LOAD_URL_TIME, System.currentTimeMillis());
         webView.addJavascriptInterface(new SonicJavaScriptInterface(sonicSessionClient, intent), "sonic");
 
         // init webview settings
@@ -154,6 +155,7 @@ public class BrowserActivity extends Activity {
         webSettings.setLoadWithOverviewMode(true);
 
 
+
         // webview is ready now, just tell session client to bind
         if (sonicSessionClient != null) {
             sonicSessionClient.bindWebView(webView);
@@ -165,7 +167,14 @@ public class BrowserActivity extends Activity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
+//        super.onBackPressed();
+        if(webView.canGoBack()) {
+            // 返回上一页面
+            webView.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK );
+            webView.goBack();
+
+        }
+
     }
 
     @Override
