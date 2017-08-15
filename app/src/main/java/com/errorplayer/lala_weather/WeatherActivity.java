@@ -1,11 +1,14 @@
 package com.errorplayer.lala_weather;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 
 import android.os.Build;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -31,7 +34,11 @@ import com.errorplayer.lala_weather.gson.Forecast;
 import com.errorplayer.lala_weather.gson.GuardianNewsItem;
 import com.errorplayer.lala_weather.gson.WeatherInfo;
 import com.errorplayer.lala_weather.util.HttpUtil;
+import com.errorplayer.lala_weather.util.SonicTools.SonicJavaScriptInterface;
+import com.errorplayer.lala_weather.util.SonicTools.SonicRuntimeImpl;
 import com.errorplayer.lala_weather.util.Utility;
+import com.tencent.sonic.sdk.SonicConfig;
+import com.tencent.sonic.sdk.SonicEngine;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -130,8 +137,9 @@ public class WeatherActivity extends AppCompatActivity {
 
     private String Memory_News_Select;
 
+    public static final int MODE_DEFAULT = 0;
 
-
+    public static final int MODE_SONIC = 1;
 
 
     @Override
@@ -145,6 +153,7 @@ public class WeatherActivity extends AppCompatActivity {
             getWindow().setStatusBarColor(Color.TRANSPARENT);
         }
         setContentView(R.layout.activity_weather);
+
         lastLocationCache_la = "";
         lastLocationCache_lo = "";
         Memory_News_Select = "politics/politics";
@@ -333,6 +342,8 @@ public class WeatherActivity extends AppCompatActivity {
                             mWeatherId = weatherId;
 
                         }
+                        init();
+
                         swipeRefresh.setRefreshing(false);
                     }
                 });
@@ -378,6 +389,7 @@ public class WeatherActivity extends AppCompatActivity {
                                 mWeatherId = weather.basic.weatherId;
 
                             }
+                            init();
                             swipeRefresh.setRefreshing(false);
                         }
                     });
@@ -388,6 +400,7 @@ public class WeatherActivity extends AppCompatActivity {
         {
 
             Toast.makeText(WeatherActivity.this,"请稍后再试。",Toast.LENGTH_SHORT).show();
+
             swipeRefresh.setRefreshing(false);
         }
         loadBingPic();
@@ -458,9 +471,9 @@ public class WeatherActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                Intent intent = new Intent(WeatherActivity.this,NewsBrowserPage.class);
-                intent.putExtra("NewsURL", StorageNews.get(0).webUrl);
-                startActivity(intent);
+                //Intent intent = new Intent(WeatherActivity.this,NewsBrowserPage.class);
+                //intent.putExtra("NewsURL", StorageNews.get(0).webUrl);
+                startBrowserActivity(MODE_SONIC,StorageNews.get(0).webUrl);
                 //Log.d("NNNNN",StorageNews.toString());
             }
         });
@@ -468,9 +481,11 @@ public class WeatherActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                Intent intent = new Intent(WeatherActivity.this,NewsBrowserPage.class);
-                intent.putExtra("NewsURL", StorageNews.get(1).webUrl);
-                startActivity(intent);
+                //Intent intent = new Intent(WeatherActivity.this,NewsBrowserPage.class);
+                //intent.putExtra("NewsURL", StorageNews.get(1).webUrl);
+                startBrowserActivity(MODE_SONIC,StorageNews.get(1).webUrl);
+
+                //startActivity(intent);
                 //Log.d("NNNNN",StorageNews.toString());
             }
         });
@@ -478,9 +493,11 @@ public class WeatherActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                Intent intent = new Intent(WeatherActivity.this,NewsBrowserPage.class);
-                intent.putExtra("NewsURL", StorageNews.get(2).webUrl);
-                startActivity(intent);
+                //Intent intent = new Intent(WeatherActivity.this,NewsBrowserPage.class);
+                //intent.putExtra("NewsURL", StorageNews.get(2).webUrl);
+                startBrowserActivity(MODE_SONIC,StorageNews.get(2).webUrl);
+
+                //startActivity(intent);
                 //Log.d("NNNNN",StorageNews.toString());
             }
         });
@@ -488,9 +505,11 @@ public class WeatherActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                Intent intent = new Intent(WeatherActivity.this,NewsBrowserPage.class);
-                intent.putExtra("NewsURL", StorageNews.get(3).webUrl);
-                startActivity(intent);
+                //Intent intent = new Intent(WeatherActivity.this,NewsBrowserPage.class);
+                //intent.putExtra("NewsURL", StorageNews.get(3).webUrl);
+                startBrowserActivity(MODE_SONIC,StorageNews.get(3).webUrl);
+
+                //startActivity(intent);
                 //Log.d("NNNNN",StorageNews.toString());
             }
         });
@@ -498,9 +517,11 @@ public class WeatherActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                Intent intent = new Intent(WeatherActivity.this,NewsBrowserPage.class);
-                intent.putExtra("NewsURL", StorageNews.get(4).webUrl);
-                startActivity(intent);
+               // Intent intent = new Intent(WeatherActivity.this,NewsBrowserPage.class);
+                //intent.putExtra("NewsURL", StorageNews.get(4).webUrl);
+                startBrowserActivity(MODE_SONIC,StorageNews.get(4).webUrl);
+
+                //startActivity(intent);
                 //Log.d("NNNNN",StorageNews.toString());
             }
         });
@@ -581,4 +602,28 @@ public class WeatherActivity extends AppCompatActivity {
     }
 
 
+
+
+
+
+    private void startBrowserActivity(int mode,String Url) {
+        Intent intent = new Intent(this, BrowserActivity.class);
+        intent.putExtra(BrowserActivity.PARAM_URL, Url);
+        intent.putExtra(BrowserActivity.PARAM_MODE, mode);
+        //intent.putExtra(SonicJavaScriptInterface.PARAM_CLICK_TIME, System.currentTimeMillis());
+        startActivity(intent);
+    }
+
+    private String getCombination_Network_Address(String select)
+    {
+        String result_URL = "https://content.guardianapis.com/search?tag="+select+"&api-key=2c26debe-2b38-470c-a967-ad52b9c210dc";
+        return result_URL;
+    }
+    private void init() {
+        // init sonic engine
+        if (!SonicEngine.isGetInstanceAllowed()) {
+            SonicEngine.createInstance(new SonicRuntimeImpl(getApplication()), new SonicConfig.Builder().build());
+        }
+
+    }
 }

@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="7dp"
         android:layout_marginBottom="7dp"
-        android:text="《卫报》提供新闻，服务器在国外，加载可能缓慢"
+        android:text="《卫报》提供新闻，因服务器在国外，加载速度可能缓慢。使用腾讯VasSonic框架技术，为首屏网页加载提速！"
         android:textColor="#f00"
         android:textSize="15sp"/>
 
