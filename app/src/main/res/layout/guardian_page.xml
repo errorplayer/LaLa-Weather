@@ -1,6 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<WebView  xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/guardian_page_webview"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    />
+
+<LinearLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+android:orientation="vertical"
+android:layout_width="match_parent"
+android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:orientation="horizontal">
+        <EditText
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="6"
+            android:layout_margin="5dp"
+            android:id="@+id/url_address_input"/>
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:layout_margin="8dp"
+            android:text="Search"
+            android:textSize="20sp"
+            android:textColor = "#d66d"
+            android:textAllCaps="false"
+            android:background="@drawable/layout_button_border1"
+            android:id="@+id/search_address_button"/>
+
+    </LinearLayout>
+
+
+    <WebView
+        android:id="@+id/guardian_page_webview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+
+
+
+
+</LinearLayout>
+

@@ -41,44 +41,7 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         }
-//        if (hasPermission()) {
-//            init();
-//        } else {
-//            requestPermission();
-//        }
 
     }
-//    private void init() {
-//        // init sonic engine
-//        if (!SonicEngine.isGetInstanceAllowed()) {
-//            SonicEngine.createInstance(new SonicRuntimeImpl(getApplication()), new SonicConfig.Builder().build());
-//        }
-//
-//    }
-//
-//
-//    private boolean hasPermission() {
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//            return checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
-//        }
-//        return true;
-//    }
-//
-//    private void requestPermission() {
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//            requestPermissions(new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_REQUEST_CODE_STORAGE);
-//        }
-//    }
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-//        if (PERMISSION_REQUEST_CODE_STORAGE == requestCode) {
-//            if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-//                requestPermission();
-//            } else {
-//                init();
-//            }
-//            return;
-//        }
-//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-//    }
+
 }

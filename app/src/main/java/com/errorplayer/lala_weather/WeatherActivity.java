@@ -65,7 +65,9 @@ public class WeatherActivity extends AppCompatActivity {
 
     private TextView titleCity;
 
-    private TextView titleUpdateTime;
+
+
+    private Button NextActivity_Button;
 
     private TextView degreeText;
 
@@ -167,7 +169,7 @@ public class WeatherActivity extends AppCompatActivity {
         weatherLayout = (ScrollView) findViewById(R.id.weather_layout);
         forecastLayout = (LinearLayout) findViewById(R.id.forecast_layout);
         titleCity = (TextView) findViewById(R.id.title_city);
-        titleUpdateTime = (TextView) findViewById(R.id.title_update_time);
+        NextActivity_Button = (Button) findViewById(R.id.next_activity_button);
         degreeText = (TextView) findViewById(R.id.degree_text);
         weatherInfoText = (TextView) findViewById(R.id.weather_info_text);
         weatherImage = (ImageView) findViewById(R.id.weather_image);
@@ -272,6 +274,14 @@ public class WeatherActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 drawerLayout.openDrawer(GravityCompat.START);
+            }
+        });
+        NextActivity_Button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setClass(WeatherActivity.this, NewsBrowserPage.class);
+                WeatherActivity.this.startActivity(intent);
             }
         });
         requestNews();
@@ -535,7 +545,7 @@ public class WeatherActivity extends AppCompatActivity {
 
 
         titleCity.setText(cityName);
-        titleUpdateTime.setText(updateTime);
+        //titleUpdateTime.setText(updateTime);
         degreeText.setText(degree);
         weatherInfoText.setText(weatherInfo);
         if (weatherInfo.contains("云"))
@@ -614,11 +624,7 @@ public class WeatherActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private String getCombination_Network_Address(String select)
-    {
-        String result_URL = "https://content.guardianapis.com/search?tag="+select+"&api-key=2c26debe-2b38-470c-a967-ad52b9c210dc";
-        return result_URL;
-    }
+
     private void init() {
         // init sonic engine
         if (!SonicEngine.isGetInstanceAllowed()) {

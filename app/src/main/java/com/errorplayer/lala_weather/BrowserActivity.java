@@ -19,12 +19,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.View;
 import android.view.WindowManager;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Button;
+import android.widget.EditText;
 
 import com.errorplayer.lala_weather.util.SonicTools.SonicJavaScriptInterface;
 import com.errorplayer.lala_weather.util.SonicTools.SonicRuntimeImpl;
@@ -58,6 +61,7 @@ import java.util.Map;
 public class BrowserActivity extends Activity {
 
 
+
     public final static String PARAM_URL = "param_url";
 
     public final static String PARAM_MODE = "param_mode";
@@ -65,6 +69,8 @@ public class BrowserActivity extends Activity {
     private SonicSession sonicSession;
 
     private WebView webView;
+    private EditText Address_Input;
+    private Button Search_Button;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -107,7 +113,8 @@ public class BrowserActivity extends Activity {
         // runtime、init configs....
         setContentView(R.layout.guardian_page);
         webView = (WebView) findViewById(R.id.guardian_page_webview);
-
+        Address_Input = (EditText)findViewById(R.id.url_address_input);
+        Search_Button = (Button)findViewById(R.id.search_address_button);
         // init webview
         webView.setWebViewClient(new WebViewClient() {
             @Override
@@ -153,6 +160,7 @@ public class BrowserActivity extends Activity {
         webSettings.setSaveFormData(false);
         webSettings.setUseWideViewPort(true);
         webSettings.setLoadWithOverviewMode(true);
+        webSettings.setSupportZoom(true);
 
 
 
@@ -163,17 +171,19 @@ public class BrowserActivity extends Activity {
         } else { // default mode
             webView.loadUrl(url);
         }
+        Search_Button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String Search_URL = Address_Input.getText().toString();
+                webView.loadUrl("http://"+Search_URL);
+
+            }
+        });
     }
 
     @Override
     public void onBackPressed() {
-//        super.onBackPressed();
-//        if(webView.canGoBack()) {
-//            // 返回上一页面
-//            webView.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK );
-//            webView.goBack();
-//
-//        }
+
 
         if (webView != null) {
             //如果h5页面可能返回，跳转到上个页面
