@@ -21,6 +21,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
@@ -171,6 +172,7 @@ public class BrowserActivity extends Activity {
         } else { // default mode
             webView.loadUrl(url);
         }
+
         Search_Button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

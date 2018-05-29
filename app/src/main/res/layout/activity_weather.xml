@@ -37,6 +37,8 @@
                     android:layout_height="wrap_content"
                     android:fitsSystemWindows="true">
 
+
+
                     <include layout="@layout/weather_title"/>
 
                     <include layout="@layout/weather_now"/>
@@ -47,9 +49,18 @@
                         android:visibility="gone"
                         android:id="@+id/AQI_BOARD"/>
 
-                    <include layout="@layout/weather_suggestion"/>
+                    <include layout="@layout/weather_suggestion"
+                        android:visibility="gone"/>
+                    <include layout="@layout/saving_weatherinfo"
+                        android:visibility="gone"
+                        android:id="@+id/SAVING_INFO_BOARD"/>
+                    <include layout="@layout/weather_juhe_topnews_board"/>
 
                     <include layout="@layout/weather_news_board"/>
+
+
+
+
 
 
                 </LinearLayout>

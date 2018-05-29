@@ -4,10 +4,11 @@
     android:layout_height="?attr/actionBarSize">
 
     <Button
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
         android:id="@+id/navi_button"
         android:layout_marginLeft="10dp"
+
         android:layout_alignParentLeft="true"
         android:background="@drawable/home"
         android:layout_centerVertical="true"/>
@@ -32,7 +33,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="浏览器"
+        android:text="点我保存"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:id="@+id/next_activity_button"/>

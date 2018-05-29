@@ -10,6 +10,16 @@
         android:layout_height="?attr/actionBarSize"
         android:background="#8888">
 
+        <Button
+            android:id="@+id/Amap_button"
+            android:layout_width="34dp"
+            android:layout_height="34dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="60dp"
+            android:layout_marginBottom="5dp"
+            android:background="@drawable/mapmarker" />
+
         <TextView
             android:id="@+id/title_text"
             android:layout_width="wrap_content"
@@ -34,8 +44,11 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="22dp"
-            android:background="@drawable/location" />
+            android:background="@drawable/location"
+            android:visibility="invisible"/>
     </RelativeLayout>
+
+
 
     <ListView
         android:id="@+id/list_view"

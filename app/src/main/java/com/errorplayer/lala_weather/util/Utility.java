@@ -8,6 +8,8 @@ import com.errorplayer.lala_weather.db.County;
 import com.errorplayer.lala_weather.db.Province;
 import com.errorplayer.lala_weather.gson.GuardianNewsItem;
 import com.errorplayer.lala_weather.gson.GuardianRecv;
+import com.errorplayer.lala_weather.gson.Juhe_News_Gson.JuheNewsAPIresult;
+import com.errorplayer.lala_weather.gson.Juhe_News_Gson.JuheNewsItem;
 import com.errorplayer.lala_weather.gson.WeatherInfo;
 import com.google.gson.Gson;
 
@@ -29,6 +31,7 @@ public class Utility {
     {
         if (!TextUtils.isEmpty(response))
         {
+            Log.d("ment", response);
             try{
                 JSONArray allProvinces = new JSONArray(response);
                 for (int i=0;i<allProvinces.length();i++)
@@ -38,6 +41,7 @@ public class Utility {
                     province.setProvinceName(provinceObject.getString("name"));
                     province.setProvinceCode(provinceObject.getInt("id"));
                     province.save();
+                    //Log.d("ment", "handleProvinceResponse: ");
                 }
                 return true;
             }catch (JSONException E)
@@ -124,11 +128,34 @@ public class Utility {
 
         try{
             JSONObject jsonObject = new JSONObject(response);
-            JSONArray jsonArray = jsonObject.getJSONArray("HeWeather5");
+            JSONArray jsonArray = jsonObject.getJSONArray("HeWeather6");
             String weatherContent = jsonArray.getJSONObject(0).toString();
             if (TextUtils.isEmpty(weatherContent))
                 Log.d("DDD", "weathercontent is null ");
             return new Gson().fromJson(weatherContent,WeatherInfo.class);
+
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static JuheNewsAPIresult handleJuheNewsAPIresult(String response)
+    {
+
+        try{
+            JSONObject Main_jsonObject = new JSONObject(response);
+            /*JSONObject jsonReason = Main_jsonObject.getJSONObject("reason");
+            if (jsonReason.toString().contains("超过每日"))
+            {
+                return null;
+            }*/
+            JSONObject jsonObject = Main_jsonObject.getJSONObject("result");
+            String JuheNewsContent = jsonObject.toString();
+            if (TextUtils.isEmpty(JuheNewsContent))
+                Log.d("DDD", "JuheNewsContent is null ");
+            return new Gson().fromJson(JuheNewsContent,JuheNewsAPIresult.class);
 
         }catch (Exception e)
         {

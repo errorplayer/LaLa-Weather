@@ -14,11 +14,11 @@ public class WeatherInfo {
 
     public BasicWeatherInfo basic;
 
-    public AQIInfo aqi;
+    //public AQIInfo aqi;
 
     public NowWeatherInfo now;
 
-    public SuggestionInfo suggestion;
+    //public SuggestionInfo lifestyle;
 
     @SerializedName("daily_forecast")
     public List<Forecast> forecastsList;

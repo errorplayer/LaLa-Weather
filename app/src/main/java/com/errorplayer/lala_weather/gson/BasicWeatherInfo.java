@@ -7,19 +7,19 @@ import com.google.gson.annotations.SerializedName;
  */
 
 public class BasicWeatherInfo {
-    @SerializedName("city")
+    @SerializedName("location")
     public String cityName;
 
-    @SerializedName("id")
+    @SerializedName("cid")
     public String weatherId;
 
-    public Update update;
+    //public Update update;
 
-    public class Update
+    /*public class Update
     {
         @SerializedName("loc")
         public String updateTime;
-    }
+    }*/
 
 
 }

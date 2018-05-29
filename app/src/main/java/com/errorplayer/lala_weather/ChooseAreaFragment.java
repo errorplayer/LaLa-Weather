@@ -28,6 +28,7 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.errorplayer.lala_weather.SupportActivity.TmapActivity;
 import com.errorplayer.lala_weather.db.City;
 import com.errorplayer.lala_weather.db.County;
 import com.errorplayer.lala_weather.db.Province;
@@ -57,8 +58,9 @@ public class ChooseAreaFragment extends Fragment {
 
 
 
-    private LocationListener locationListener;
+    private Button Amap_button;
 
+    private LocationListener locationListener;
 
     private LocationManager locationManager;
 
@@ -112,14 +114,17 @@ public class ChooseAreaFragment extends Fragment {
         locateButton = (Button) view.findViewById(R.id.locate_button);
         titleText = (TextView) view.findViewById(R.id.title_text);
         backButton = (Button) view.findViewById(R.id.back_button);
+        Amap_button = (Button) view.findViewById(R.id.Amap_button);
         listView = (ListView) view.findViewById(R.id.list_view);
         //adapter = new ArrayAdapter<>(listView.getContext(),android.R.layout.simple_list_item_1,dataList);
         adapter = new SimpleAdapter(listView.getContext(),
                 dataList,
                 R.layout.county_item,
-                new String[]{"nowtemperature", "countyname", "nowstatus","weatherid"},
+                new String[]{"nowtemperature","countyname", "nowstatus","weatherid"},
                 new int[]{R.id.now_temperature, R.id.county_name,R.id.county_nowstatus, R.id.weather_id});
         listView.setAdapter(adapter);
+
+
         return view;
     }
 
@@ -153,6 +158,7 @@ public class ChooseAreaFragment extends Fragment {
                         activity.drawerLayout.closeDrawers();
                         activity.swipeRefresh.setRefreshing(true);
                         activity.requestWeather(weatherId);
+
                     }
 
                 }
@@ -163,7 +169,6 @@ public class ChooseAreaFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (currentLevel == LEVEL_COUNTY) {
-
                     queryCities();
                 } else if (currentLevel == LEVEL_CITY) {
                     queryProvinces();
@@ -180,7 +185,32 @@ public class ChooseAreaFragment extends Fragment {
                     WeatherActivity activity = (WeatherActivity) getActivity();
                     activity.drawerLayout.closeDrawers();
                     activity.swipeRefresh.setRefreshing(true);
-                    activity.requestVirtualWeather();
+                    //activity.requestVirtualWeather();
+                }
+
+
+            }
+
+        });
+
+        Amap_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if (getActivity() instanceof MainActivity) {
+                    Intent intent = new Intent(getActivity(), TmapActivity.class);
+                    //intent.putExtra("weather_id", weatherId);
+                    startActivity(intent);
+                    getActivity().finish();
+                } else if (getActivity() instanceof WeatherActivity) {
+                    WeatherActivity activity = (WeatherActivity) getActivity();
+                    activity.drawerLayout.closeDrawers();
+                    activity.swipeRefresh.setRefreshing(true);
+                    //activity.requestWeather(weatherId);
+                   Intent intent = new Intent(getActivity(), TmapActivity.class);
+                    //getActivity().finish();
+                    startActivity(intent);
+
                 }
 
 
@@ -190,31 +220,35 @@ public class ChooseAreaFragment extends Fragment {
 
     }
 
-
-
     private void queryCounties() {
+
+        Log.d("queryCounties", "successful 1! ");
         titleText.setText(selectedCity.getCityName());
         backButton.setVisibility(View.VISIBLE);
         countyList = DataSupport.where("cityId = ?",String.valueOf(selectedCity.getId())).find(County.class);
         if (countyList.size() > 0)
         {
+            Log.d("queryCounties", "successful 2! ");
             dataList.clear();
             for (int index = 0; index != countyList.size();index++)
             {
-                String weatherUrl = "https://free-api.heweather.com/v5/weather?city="+countyList.get(index).getWeatherId()+"&key=8ac5c8e5219b440694de3be0ff010fb2";
+                String weatherUrl = "https://free-api.heweather.com/s6/weather?location="+countyList.get(index).getWeatherId()+"&key=e6bdeb4c2c2b46efb4035de24d387f40";
+                //String weatherUrl = "https://free-api.heweather.com/s6/weather?location=CN101080402&key=8ac5c8e5219b440694de3be0ff010fb2";
                 HttpUtil.sendOkHttpRequest(weatherUrl, new Callback() {
                     @Override
                     public void onFailure(Call call, IOException e) {
                         e.printStackTrace();
-                        Log.d(TAG, "queryCounties: http网络请求失败");
+                        Log.d("queryCounties",countyList.get(0).getWeatherId());
+                        Log.d("queryCounties", "queryCounties: http网络请求失败");
 
                     }
 
                     @Override
                     public void onResponse(Call call, Response response) throws IOException {
                         final String responseText = response.body().string();
+                        Log.d("queryCounties", "queryCounties: http网络请求成功");
                         final WeatherInfo weather = Utility.handleWeatherResponse(responseText);
-
+                        //Log.d("queryWEATHER", weather.now.more);
 
 
                         getActivity().runOnUiThread(new Runnable() {
@@ -230,7 +264,7 @@ public class ChooseAreaFragment extends Fragment {
                                     item.put("nowtemperature",weather.now.temperature);
                                     item.put("countyname",weather.basic.cityName);
                                     item.put("weatherid",weather.basic.weatherId);
-                                    item.put("nowstatus",weather.now.more.info);
+                                    item.put("nowstatus",weather.now.more);
 
                                     dataList.add(item);
 
@@ -255,7 +289,6 @@ public class ChooseAreaFragment extends Fragment {
             queryFromServer(address,"county");
         }
     }
-
 
     private void queryCities() {
         titleText.setText(selectedProvince.getProvinceName());
@@ -313,6 +346,7 @@ public class ChooseAreaFragment extends Fragment {
 
     private void queryFromServer(String address, final String type) {
         showProgressDialog();
+
         HttpUtil.sendOkHttpRequest(address, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -320,9 +354,12 @@ public class ChooseAreaFragment extends Fragment {
                     @Override
                     public void run() {
                         closeProgressDialog();
+                        //Log.d("12121", "handleProvinceResponse");
+
                         //Toast.makeText(getContext(),"加载失败",Toast.LENGTH_SHORT).show();
                     }
                 });
+                // e.printStackTrace();
 
             }
 
@@ -332,6 +369,7 @@ public class ChooseAreaFragment extends Fragment {
                 boolean result = false;
                 if ("province".equals(type))
                 {
+
                     result = Utility.handleProvinceResponse(responseText);
                 }else if ("city".equals(type))
                 {
@@ -343,23 +381,23 @@ public class ChooseAreaFragment extends Fragment {
                 }
                 if (result)
                 {
-                   getActivity().runOnUiThread(new Runnable() {
-                       @Override
-                       public void run() {
-                           closeProgressDialog();
-                           if ("province".equals(type))
-                           {
-                               queryProvinces();
-                           }else if ("city".equals(type))
-                           {
-                               Log.d(TAG, "run: 请求成功，再次更新显示");
-                              queryCities();
-                           }else if ("county".equals(type))
-                           {
-                               queryCounties();
-                           }
-                       }
-                   });
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            closeProgressDialog();
+                            if ("province".equals(type))
+                            {
+                                queryProvinces();
+                            }else if ("city".equals(type))
+                            {
+                                Log.d(TAG, "run: 请求成功，再次更新显示");
+                                queryCities();
+                            }else if ("county".equals(type))
+                            {
+                                queryCounties();
+                            }
+                        }
+                    });
                 }
             }
 
@@ -383,10 +421,6 @@ public class ChooseAreaFragment extends Fragment {
         }
         progressDialog.show();
     }
-
-
-
-
 
     public void getLoc() {
         if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
@@ -471,5 +505,7 @@ public class ChooseAreaFragment extends Fragment {
 
 
     }
+
+
 
 }
