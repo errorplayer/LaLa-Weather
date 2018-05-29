@@ -207,7 +207,14 @@ public class ChooseAreaFragment extends Fragment {
                     activity.drawerLayout.closeDrawers();
                     activity.swipeRefresh.setRefreshing(true);
                     //activity.requestWeather(weatherId);
+
                    Intent intent = new Intent(getActivity(), TmapActivity.class);
+                   if (activity.lastLocationCache_lo  != "")
+                   {
+                       intent.putExtra("lat",activity.lastLocationCache_la);
+                       intent.putExtra("lng",activity.lastLocationCache_lo);
+                   }
+
                     //getActivity().finish();
                     startActivity(intent);
 

@@ -85,9 +85,9 @@ public class WeatherActivity extends AppCompatActivity {
 
     private Button juheNews_refresh;
 
-    private String lastLocationCache_la;
+    public String lastLocationCache_la;
 
-    private String lastLocationCache_lo;
+    public String lastLocationCache_lo;
 
     public DrawerLayout drawerLayout;
 

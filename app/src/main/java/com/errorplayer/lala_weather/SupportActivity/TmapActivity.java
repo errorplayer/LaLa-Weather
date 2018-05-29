@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,23 +46,38 @@ public class TmapActivity extends FragmentActivity {
     private LinearLayout mainLayout;
     private FrameLayout mapFrame;
 
-    private LatLng mZhongGuanCun;
+    private LatLng mJLHCampus;
+    private LatLng mLastPlace;
     private LatLng mLatLng;
     private Marker mMarker;
     private Polyline mPolyline;
     private Polygon mpPolygon;
     private Circle mCircle;
     int id = 0x7f071001;
+
+    private String center_lat;
+    private String center_lng;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // TODO Auto-generated method stub
         super.onCreate(savedInstanceState);
+
         mainLayout = new LinearLayout(this);
         mainLayout.setOrientation(LinearLayout.VERTICAL);
         mainLayout.setBackgroundColor(0xffffffff);
         mainLayout.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         setContentView(mainLayout);
-        init();
+        center_lat = "";
+        center_lng = "";
+        mLastPlace = new LatLng(30.5,121);
+        if (!TextUtils.isEmpty(getIntent().getStringExtra("lat")))
+        {
+            center_lat = getIntent().getStringExtra("lat");
+            center_lng = getIntent().getStringExtra("lng");
+            mLastPlace = new LatLng(Double.valueOf(center_lat),Double.valueOf(center_lng));
+            Log.d("lat", mLastPlace.getLatitude()+"");
+        }
+       init();
     }
 
     @Override
@@ -71,6 +87,7 @@ public class TmapActivity extends FragmentActivity {
         if (mapView == null) {
             mapView = qMapFragment.getMapView();
             tencnetMap = mapView.getMap();
+            tencnetMap.animateTo(mLastPlace);
         }
         bindLinstener();
 
@@ -78,21 +95,22 @@ public class TmapActivity extends FragmentActivity {
     }
 
     private void init() {
+
         LinearLayout lineOne = new LinearLayout(this);
         lineOne.setOrientation(LinearLayout.HORIZONTAL);
         mainLayout.addView(lineOne);
 
         btnAnimate = new Button(this);
-        btnAnimate.setText("移动到中关村");
+        btnAnimate.setText("移动到九龙湖校区");
         lineOne.addView(btnAnimate);
 
-        btnMarker = new Button(this);
-        btnMarker.setText("添加Marker");
-        lineOne.addView(btnMarker);
+        //btnMarker = new Button(this);
+        //btnMarker.setText("添加Marker");
+        //lineOne.addView(btnMarker);
 
-        btnGeometry = new Button(this);
-        btnGeometry.setText("添加图形");
-        lineOne.addView(btnGeometry);
+        //btnGeometry = new Button(this);
+        //btnGeometry.setText("添加图形");
+        //lineOne.addView(btnGeometry);
 
         tvMonitor = new TextView(this);
         tvMonitor.setTextColor(0xff000000);
@@ -143,7 +161,7 @@ public class TmapActivity extends FragmentActivity {
         circleOp.strokeColor(0xff0000ff);
         circleOp.strokeWidth(5);
         circleOp.fillColor(0xff00ff00);
-        mZhongGuanCun = new LatLng(39.980484, 116.311302);//中关村
+        mJLHCampus = new LatLng(31.886469, 118.82119);//JLH
 
         btnAnimate.setOnClickListener(new View.OnClickListener() {
 
@@ -152,21 +170,22 @@ public class TmapActivity extends FragmentActivity {
                 @Override
                 public void onFinish() {
                     // TODO Auto-generated method stub
-                    btnAnimate.setText("移动到中关村");
+                    btnAnimate.setText("移动到九龙湖校区");
                 }
 
                 @Override
                 public void onCancel() {
                     // TODO Auto-generated method stub
-                    btnAnimate.setText("移动到中关村");
+                    btnAnimate.setText("移动到九龙湖校区");
                 }
             };
 
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
-                if (btnAnimate.getText().toString().equals("移动到中关村")) {
-                    tencnetMap.animateTo(mZhongGuanCun/*, 4000, callback*/);
+                if (btnAnimate.getText().toString().equals("移动到九龙湖校区")) {
+                    tencnetMap.animateTo(mJLHCampus/*, 4000, callback*/);
+                    tencnetMap.setZoom(16);
                     btnAnimate.setText("停止动画");
                 } else {
                     tencnetMap.stopAnimation();
@@ -182,7 +201,7 @@ public class TmapActivity extends FragmentActivity {
             }
         });
 
-        btnMarker.setOnClickListener(new View.OnClickListener() {
+       /* btnMarker.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
@@ -201,16 +220,16 @@ public class TmapActivity extends FragmentActivity {
                 }
 
             }
-        });
+        });*/
 
-        btnGeometry.setOnClickListener(new View.OnClickListener() {
+        /*btnGeometry.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
 
 
             }
-        });
+        });*/
         tencnetMap.setOnMapLoadedListener(new TencentMap.OnMapLoadedListener() {
 
             @Override
@@ -226,7 +245,7 @@ public class TmapActivity extends FragmentActivity {
             tvMonitor.setText( "Camera Change Finish:" +
                     "Target:" + arg0.getTarget().toString() +
                     "zoom level:" + arg0.getZoom());
-            btnAnimate.setText("移动到中关村");
+            btnAnimate.setText("移动到九龙湖校区");
 
 
             }
