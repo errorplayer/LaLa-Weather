@@ -31,7 +31,7 @@ import com.tencent.tencentmap.mapsdk.map.CancelableCallback;
 import com.tencent.tencentmap.mapsdk.map.MapView;
 import com.tencent.tencentmap.mapsdk.map.QSupportMapFragment;
 import com.tencent.tencentmap.mapsdk.map.TencentMap;
-//package com.tencent.mapsdk.raster.demo;
+
 
 
 

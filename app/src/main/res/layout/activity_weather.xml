@@ -54,7 +54,9 @@
                     <include layout="@layout/saving_weatherinfo"
                         android:visibility="gone"
                         android:id="@+id/SAVING_INFO_BOARD"/>
+
                     <include layout="@layout/weather_juhe_topnews_board"/>
+                    <include layout="@layout/group_chat_board"/>
 
                     <include layout="@layout/weather_news_board"/>
 
