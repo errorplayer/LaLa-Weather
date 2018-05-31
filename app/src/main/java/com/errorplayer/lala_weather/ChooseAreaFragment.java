@@ -110,6 +110,7 @@ public class ChooseAreaFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater,  ViewGroup container, Bundle savedInstanceState) {
 
+
         View view = inflater.inflate(R.layout.choose_area,container,false);
         locateButton = (Button) view.findViewById(R.id.locate_button);
         titleText = (TextView) view.findViewById(R.id.title_text);

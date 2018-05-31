@@ -24,7 +24,8 @@
         android:layout_marginTop="5dp"
         android:text="预12313报"
         android:textColor="#000"
-        android:textSize="20sp"/>
+        android:textSize="20sp"
+        android:id="@+id/line_1"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -32,7 +33,8 @@
         android:layout_marginStart="15dp"
         android:text="预12313报"
         android:textColor="#000"
-        android:textSize="20sp"/>
+        android:textSize="20sp"
+        android:id="@+id/line_2"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -40,7 +42,8 @@
         android:layout_marginStart="15dp"
         android:text="预12313报"
         android:textColor="#000"
-        android:textSize="20sp"/>
+        android:textSize="20sp"
+        android:id="@+id/line_3"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -48,7 +51,8 @@
         android:layout_marginStart="15dp"
         android:text="预12313报"
         android:textColor="#000"
-        android:textSize="20sp"/>
+        android:textSize="20sp"
+        android:id="@+id/line_4"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -56,7 +60,8 @@
         android:layout_marginStart="15dp"
         android:text="预12313报"
         android:textColor="#000"
-        android:textSize="20sp"/>
+        android:textSize="20sp"
+        android:id="@+id/line_5"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -64,21 +69,25 @@
         android:layout_marginStart="15dp"
         android:text="预12313报"
         android:textColor="#000"
-        android:textSize="20sp"/>
+        android:textSize="20sp"
+        android:id="@+id/line_6"/>
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="56dp"
         android:layout_marginTop="5dp">
     <EditText
+        android:id="@+id/edit_send_text"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_marginStart="15dp"
         android:layout_marginLeft="15dp"
         android:singleLine="false"
+        android:textColor="#a42342"
         android:layout_weight="5.5"/>
     <Button
+        android:id="@+id/send_text_b"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
