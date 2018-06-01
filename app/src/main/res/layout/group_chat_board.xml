@@ -7,6 +7,11 @@
     android:background="@drawable/chat_specific"
     >
 
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="66dp"
+        android:layout_marginTop="30dp">
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -16,13 +21,23 @@
         android:text="趣聊"
         android:textColor="#a933"
         android:textSize="25sp"/>
+        <TextView
+            android:layout_width="180dp"
+            android:layout_height="wrap_content"/>
+
+        <EditText
+            android:id="@+id/edit_nicheng"
+            android:layout_width="190dp"
+            android:layout_height="wrap_content"
+            android:singleLine="true"/>
+    </LinearLayout>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="15dp"
         android:layout_marginStart="15dp"
         android:layout_marginTop="5dp"
-        android:text="预12313报"
+
         android:textColor="#000"
         android:textSize="20sp"
         android:id="@+id/line_1"/>
@@ -31,7 +46,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="15dp"
         android:layout_marginStart="15dp"
-        android:text="预12313报"
+
         android:textColor="#000"
         android:textSize="20sp"
         android:id="@+id/line_2"/>
@@ -40,7 +55,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="15dp"
         android:layout_marginStart="15dp"
-        android:text="预12313报"
+
         android:textColor="#000"
         android:textSize="20sp"
         android:id="@+id/line_3"/>
@@ -49,7 +64,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="15dp"
         android:layout_marginStart="15dp"
-        android:text="预12313报"
+
         android:textColor="#000"
         android:textSize="20sp"
         android:id="@+id/line_4"/>
@@ -58,7 +73,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="15dp"
         android:layout_marginStart="15dp"
-        android:text="预12313报"
+
         android:textColor="#000"
         android:textSize="20sp"
         android:id="@+id/line_5"/>
@@ -67,7 +82,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="15dp"
         android:layout_marginStart="15dp"
-        android:text="预12313报"
+
         android:textColor="#000"
         android:textSize="20sp"
         android:id="@+id/line_6"/>
@@ -75,7 +90,7 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="66dp"
         android:layout_marginTop="5dp">
     <EditText
         android:id="@+id/edit_send_text"
@@ -85,15 +100,19 @@
         android:layout_marginLeft="15dp"
         android:singleLine="false"
         android:textColor="#a42342"
-        android:layout_weight="5.5"/>
+        android:layout_weight="5"/>
     <Button
         android:id="@+id/send_text_b"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:layout_marginLeft="5dp"
-        android:background="@drawable/send"
-        android:height="2px"/>
+        android:layout_weight="2"
+        android:layout_marginRight="1dp"
+        android:textSize="34dp"
+        android:layout_gravity="center"
+        android:text="发送"
+        android:background="#00000000"
+
+        android:textColor="#134"/>
 
     </LinearLayout>
 

@@ -47,10 +47,13 @@ import com.alibaba.sdk.android.oss.common.OSSLog;
 import com.alibaba.sdk.android.oss.common.auth.OSSCredentialProvider;
 import com.alibaba.sdk.android.oss.common.auth.OSSStsTokenCredentialProvider;
 import com.alibaba.sdk.android.oss.internal.OSSAsyncTask;
+import com.alibaba.sdk.android.oss.model.AppendObjectRequest;
+import com.alibaba.sdk.android.oss.model.AppendObjectResult;
 import com.alibaba.sdk.android.oss.model.GetObjectRequest;
 import com.alibaba.sdk.android.oss.model.GetObjectResult;
 import com.alibaba.sdk.android.oss.model.ListObjectsRequest;
 import com.alibaba.sdk.android.oss.model.ListObjectsResult;
+import com.alibaba.sdk.android.oss.model.ObjectMetadata;
 import com.alibaba.sdk.android.oss.model.PutObjectRequest;
 import com.alibaba.sdk.android.oss.model.PutObjectResult;
 import com.bumptech.glide.Glide;
@@ -138,6 +141,8 @@ public class WeatherActivity extends AppCompatActivity {
     };
 
     private OSS oss;
+
+    private EditText nicheng_user;
 
     private Button Send_text_Button;
 
@@ -278,6 +283,8 @@ public class WeatherActivity extends AppCompatActivity {
         line6 = findViewById(R.id.line_6);
 
         oss = init_and_get_OSSClient();
+        nicheng_user = findViewById(R.id.edit_nicheng);
+        nicheng_user.setText("匿名用户");
         Send_text_Button = findViewById(R.id.send_text_b);
         send_text_string = findViewById(R.id.edit_send_text);
         intentFilter = new IntentFilter();
@@ -403,7 +410,7 @@ public class WeatherActivity extends AppCompatActivity {
             @Override
             public void onRefresh() {
                 requestWeather(mWeatherId);
-                requestJuheNews();
+                //requestJuheNews();
 
             }
         });
@@ -464,7 +471,7 @@ public class WeatherActivity extends AppCompatActivity {
 
                     }
 
-
+                    content =  nicheng_user.getText().toString()+": "+content;
                     Append_File("tiyu",content);
                     chat_log = chat_log + content +"%";
 
@@ -484,7 +491,7 @@ public class WeatherActivity extends AppCompatActivity {
 
 
                 send_text_string.setText("");
-                //
+
 
 
 
@@ -501,11 +508,11 @@ public class WeatherActivity extends AppCompatActivity {
                 requestJuheNews();
             }
         });
-        requestJuheNews_forOncreate();
+        //requestJuheNews_forOncreate();
         memory_news_type = 9;
         requestNews();
 
-        timer.schedule(mTimerTask,2000,2000);
+        timer.schedule(mTimerTask,2000,3000);
 
 
 
@@ -1110,9 +1117,10 @@ public class WeatherActivity extends AppCompatActivity {
 // 在移动端建议使用STS方式初始化OSSClient。
 // 更多信息可查看sample 中 sts 使用方式(https://github.com/aliyun/aliyun-oss-android-sdk/tree/master/app/src/main/java/com/alibaba/sdk/android/oss/app)
         OSSCredentialProvider credentialProvider =
-                new OSSStsTokenCredentialProvider("STS.NJ5S9zBuC4XbqgvcLdKH5BUDV",
-                        "34YMyW8QZJ9wmm1NzS68wYTyKTMoUKMa3g4EQ5B6KhfW",
-                        "CAIS6gF1q6Ft5B2yfSjIr4mAGIPOr6pig5qJc0HHh0wxR8cZrZDvtDz2IHFPdHNgAuoatPswmWBT7/gSlqx6T8cdHBQMu1+pPdAFnzm6aq/t5uaXj9Vd+rDHdEGXDxnkprywB8zyUNLafNq0dlnAjVUd6LDmdDKkLTfHWN/z/vwBVNkMWRSiZjdrHcpfIhAYyPUXLnzML/2gQHWI6yjydBM36lEh0zsuuP7imJfGt0Tk4QekmrNPlePYOYO5asRgBpB7Xuqu0fZ+Hqi7i38Lu0Iar/0q1vMbpGec54/NGTdK/h+fIerEClXS/cLSm8MagAGX9bV5lhF8uI/flm4SKfb3aoNjzw42UvDJH6Sy/IsIffvgZ+n+PjMuFq6SOaS0ZkPydRvqv2iPonEKUxpR9HPZ929KFCsfQ7LMBU1l11FscSO79v6638h1NNT+MNpqF8b80qPTZXC3Y3qWNF8echgwfb4EOVwSFORzhTJk4qFcjg==");
+                new OSSStsTokenCredentialProvider(
+                        "STS.NKRwcaGY5U8444CBkzNXtzxSa",
+                        "Cs5gjsZMxcxxn6eoRwhGDquzFctPXAY9NFknK7w2NLwp",
+                        "CAIS6gF1q6Ft5B2yfSjIr4jnPNnVqoYU4vrfNhLypmsvQtdYlb34gzz2IHFPdHNgAuoatPswmWBT7/gSlqx6T8cdHBQw3kvePdAFnzm6aq/t5uaXj9Vd+rDHdEGXDxnkprywB8zyUNLafNq0dlnAjVUd6LDmdDKkLTfHWN/z/vwBVNkMWRSiZjdrHcpfIhAYyPUXLnzML/2gQHWI6yjydBM36lEh0zsuuP7imJfGt0Tk4QekmrNPlePYOYO5asRgBpB7Xuqu0fZ+Hqi7i38Lu0Iar/0q1vMbpGec54/NGTdK/h+fIerEClXS/cLSm8MagAF0RggmL0X6W4dTogUFv2A088eTQwyAubXC71Tzpe1ghR7eqgp1tsoWZxjTrLLpkVLKRG2XOYeHLCh1ss+7j8aJjsBPHS7nSHsjA3exTa4Sxyzmkgd14A9FoVAqrBGUlmrwtV9YCV/1+FT8TwTP1h2Dk0OqeHr3WvQAYs0/GyEBWQ==");
 //该配置类如果不设置，会有默认配置，具体可看该类
         ClientConfiguration conf = new ClientConfiguration();
         conf.setConnectionTimeout(15 * 1000); // 连接超时，默认15秒
@@ -1363,5 +1371,28 @@ public class WeatherActivity extends AppCompatActivity {
                     Log.e("HostId", e.getHostId());
                     Log.e("RawMessage", e.getRawMessage());
                 }
+       /* AppendObjectRequest append = new AppendObjectRequest("lala-zy", "tiyu_chat_log.txt", getOneFile());
+        ObjectMetadata metadata = new ObjectMetadata();
+        metadata.setContentType("application/octet-stream");
+        append.setMetadata(metadata);
+// 设置追加位置
+        append.setPosition(0);
+        append.setProgressCallback(new OSSProgressCallback<AppendObjectRequest>() {
+            @Override
+            public void onProgress(AppendObjectRequest request, long currentSize, long totalSize) {
+                Log.d("AppendObject", "currentSize: " + currentSize + " totalSize: " + totalSize);
+            }
+        });
+        OSSAsyncTask task = oss.asyncAppendObject(append, new OSSCompletedCallback<AppendObjectRequest, AppendObjectResult>() {
+            @Override
+            public void onSuccess(AppendObjectRequest request, AppendObjectResult result) {
+                Log.d("AppendObject", "AppendSuccess");
+                Log.d("NextPosition", "" + result.getNextPosition());
+            }
+            @Override
+            public void onFailure(AppendObjectRequest request, ClientException clientExcepion, ServiceException serviceException) {
+                // 异常处理
+            }
+        });*/
     }
 }

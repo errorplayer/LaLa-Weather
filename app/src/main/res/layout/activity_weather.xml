@@ -11,6 +11,7 @@
         android:layout_height="match_parent"
         android:id="@+id/bing_pic_img"
         android:scaleType="centerCrop"/>
+
     <android.support.v4.widget.DrawerLayout
         android:id="@+id/drawer_layout"
         android:layout_width="match_parent"
@@ -27,42 +28,42 @@
                 android:id="@+id/weather_layout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:scrollbars="none"
-                android:overScrollMode="never">
+                android:overScrollMode="never"
+                android:scrollbars="none">
 
 
                 <LinearLayout
-                    android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fitsSystemWindows="true">
+                    android:fitsSystemWindows="true"
+                    android:orientation="vertical">
 
 
+                    <include layout="@layout/weather_title" />
 
-                    <include layout="@layout/weather_title"/>
+                    <include layout="@layout/weather_now" />
 
-                    <include layout="@layout/weather_now"/>
+                    <include layout="@layout/forecast" />
 
-                    <include layout="@layout/forecast"/>
+                    <include
+                        android:id="@+id/AQI_BOARD"
+                        layout="@layout/weather_aqi"
+                        android:visibility="gone" />
 
-                    <include layout="@layout/weather_aqi"
-                        android:visibility="gone"
-                        android:id="@+id/AQI_BOARD"/>
+                    <include
+                        layout="@layout/weather_suggestion"
+                        android:visibility="gone" />
 
-                    <include layout="@layout/weather_suggestion"
-                        android:visibility="gone"/>
-                    <include layout="@layout/saving_weatherinfo"
-                        android:visibility="gone"
-                        android:id="@+id/SAVING_INFO_BOARD"/>
+                    <include
+                        android:id="@+id/SAVING_INFO_BOARD"
+                        layout="@layout/saving_weatherinfo"
+                        android:visibility="gone" />
 
-                    <include layout="@layout/weather_juhe_topnews_board"/>
-                    <include layout="@layout/group_chat_board"/>
+                    <include layout="@layout/weather_juhe_topnews_board" />
 
-                    <include layout="@layout/weather_news_board"/>
+                    <include layout="@layout/group_chat_board" />
 
-
-
-
+                    <include layout="@layout/weather_news_board" />
 
 
                 </LinearLayout>
@@ -71,10 +72,10 @@
         </android.support.v4.widget.SwipeRefreshLayout>
 
         <fragment
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
             android:id="@+id/choose_area_fragment"
             android:name="com.errorplayer.lala_weather.ChooseAreaFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_gravity="start"></fragment>
     </android.support.v4.widget.DrawerLayout>
 
